@@ -4,10 +4,18 @@
 import { ref, onMounted } from 'vue';
 import { useQuizStore } from '@/stores/quiz.store'; // <-- ИСПОЛЬЗУЕМ АЛИАС
 
+HEAD
 // ИСПРАВЛЯЕМ ВСЕ ПУТИ НА АЛИАСЫ '@'
 import QuestionCard from '@/components/quiz/QuestionCard.vue';
 import LeadFormModal from '@/components/quiz/LeadFormModal.vue';
 import Spinner from '@/components/Spinner.vue';  // <-- ИСПРАВЛЕННЫЙ ПУТЬ
+
+// Импортируем все компоненты
+import PriceDisplay from '../components/quiz/PriceDisplay.vue';
+import QuestionCard from '../components/quiz/QuestionCard.vue';
+import LeadFormModal from '../components/quiz/LeadFormModal.vue';
+import Spinner from '../components/quiz/ui/Spinner.vue'; // <-- Исправляем путь к спиннеру
+ff32d054763a076e239d8b550239cda8bc239e4e
 
 const quizStore = useQuizStore();
 const showModal = ref(false);

@@ -1,4 +1,14 @@
+ HEAD
 // /app/src/router/index.js
+
+// frontend/src/router/index.js
+import { createRouter, createWebHistory } from 'vue-router'
+import HomeView from '../views/HomeView.vue'
+import QuizView from '../views/QuizView.vue'
+import AdminLayout from '../layouts/AdminLayout.vue' // <-- Импортируем новый лэйаут
+import DashboardView from '../views/DashboardView.vue' // <-- Импортируем страницы админки
+import LeadsView from '../views/admin/LeadsView.vue'
+ ff32d054763a076e239d8b550239cda8bc239e4e
 
 import { createRouter, createWebHistory } from 'vue-router';
 
@@ -31,4 +41,7 @@ const router = createRouter({
   routes
 });
 
+ HEAD
 export default router;
+
+ ff32d054763a076e239d8b550239cda8bc239e4e
