@@ -1,29 +1,28 @@
+# backend/app/main.py
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from app.api.v1.api import api_router
 from app.core.config import settings
-from app.api.v1.endpoints import health, quizzes, leads
-from app.api import deps
-from app import initial_data # <-- Импортируем наш инициализатор
 
-app = FastAPI(
-    title=settings.PROJECT_NAME,
-    openapi_url=f"{settings.API_V1_STR}/openapi.json"
+app = FastAPI(title=settings.PROJECT_NAME)
+
+# Настройка CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[str(origin) for origin in settings.BACKEND_CORS_ORIGINS],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
-@app.on_event("startup")
-def on_startup() -> None:
-    """
-    Выполняется один раз при старте приложения.
-    Инициализирует базу данных.
-    """
-    # Получаем сессию и передаем ее в наш единый, правильный инициализатор
-    db = next(deps.get_db())
-    initial_data.init_db(db)
+# НЕ ИСПОЛЬЗУЕМ БОЛЬШЕ Base.metadata.create_all(bind=engine)
 
-# Подключаем роутеры API
-app.include_router(health.router, prefix=settings.API_V1_STR, tags=["Health"])
-app.include_router(quizzes.router, prefix=f"{settings.API_V1_STR}/quizzes", tags=["Quizzes"])
-app.include_router(leads.router, prefix=f"{settings.API_V1_STR}/leads", tags=["Leads"])
+app.include_router(api_router, prefix=settings.API_V1_STR)
 
-@app.get("/", tags=["Root"])
+@app.get("/")
 def read_root():
+ codex/add-newline-at-eof-for-project-files
     return {"message": f"Welcome to {settings.PROJECT_NAME}"}
+
+    return {"message": "Welcome to LeadConverter Pro API"}
+ main
