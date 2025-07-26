@@ -1,41 +1,53 @@
+# docker-compose.yml (ИСПРАВЛЕННАЯ ВЕРСИЯ)
+
+version: '3.8'
 
 services:
   db:
     image: postgres:15-alpine
+    container_name: leadconverter-pro-db-1
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-    env_file:
-      - ./.env
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
     ports:
-      - "5432:5432" # Открываем порт для возможного подключения к БД с хоста
+      - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
-      interval: 5s
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
       timeout: 5s
       retries: 5
 
   backend:
-    build: ./backend
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: leadconverter-pro-backend-1
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
     volumes:
       - ./backend:/app
     ports:
       - "8000:8000"
-    env_file:
-      - ./.env
     depends_on:
       db:
         condition: service_healthy
+    env_file:
+      - .env
 
   frontend:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile.dev # Используем Dockerfile для разработки
+      # --- ИЗМЕНЕНИЯ ЗДЕСЬ ---
+      context: .  # 1. Контекст теперь - корень проекта.
+      dockerfile: frontend/Dockerfile.dev # 2. Путь к Dockerfile указываем от корня.
+      # --- КОНЕЦ ИЗМЕНЕНИЙ ---
+    container_name: leadconverter-pro-frontend-1
+    ports:
+      - "5173:5173"
     volumes:
       - ./frontend:/app
-      - /app/node_modules # Исключаем node_modules из монтирования, чтобы использовать те, что внутри контейнера
-    ports:
-      - "5173:5173" # Стандартный порт Vite
+      - /app/node_modules
     depends_on:
       - backend
 
