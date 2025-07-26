@@ -1,4 +1,4 @@
-<!-- frontend/src/views/admin/DashboardView.vue -->
+<!-- frontend/src/views/DashboardView.vue -->
 <template>
   <div>
     <h1>Дашборд</h1>
