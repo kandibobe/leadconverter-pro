@@ -7,7 +7,7 @@ import { useQuizStore } from '../stores/quiz.store.js';
 import PriceDisplay from '../components/quiz/PriceDisplay.vue';
 import QuestionCard from '../components/quiz/QuestionCard.vue';
 import LeadFormModal from '../components/quiz/LeadFormModal.vue';
-import Spinner from '../components/ui/Spinner.vue'; // <-- Импортируем спиннер
+import Spinner from '../components/quiz/ui/Spinner.vue'; // <-- Исправляем путь к спиннеру
 
 const route = useRoute();
 const quizStore = useQuizStore();
