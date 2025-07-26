@@ -18,33 +18,29 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted } from 'vue'
+import dashboardService from '../services/dashboard.service.js'
 
-const metrics = ref(null);
-const loading = ref(true);
-const error = ref(null);
-
-const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1';
+const metrics = ref(null)
+const loading = ref(true)
+const error = ref(null)
 
 const fetchMetrics = async () => {
   try {
-    const response = await fetch(`${API_URL}/dashboard/metrics`);
-    if (!response.ok) {
-      throw new Error('Не удалось загрузить метрики');
-    }
-    metrics.value = await response.json();
+    const response = await dashboardService.getMetrics()
+    metrics.value = response.data
   } catch (e) {
-    error.value = e.message;
+    error.value = e.message
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 
 const formatCurrency = (value) => {
-  return new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB' }).format(value);
-};
+  return new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB' }).format(value)
+}
 
-onMounted(fetchMetrics);
+onMounted(fetchMetrics)
 </script>
 
 <style scoped>
@@ -58,7 +54,7 @@ onMounted(fetchMetrics);
   background-color: white;
   padding: 25px;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
   text-align: center;
 }
 .metric-value {
@@ -71,7 +67,8 @@ onMounted(fetchMetrics);
   color: #7f8c8d;
   margin-top: 10px;
 }
-.loading, .error {
+.loading,
+.error {
   margin-top: 20px;
   font-size: 1.2em;
 }
