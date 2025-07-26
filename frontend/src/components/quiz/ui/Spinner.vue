@@ -4,6 +4,10 @@
   </div>
 </template>
 
+<script setup>
+defineOptions({ name: 'AppSpinner' });
+</script>
+
 <style scoped>
 .spinner-overlay {
   position: absolute;
