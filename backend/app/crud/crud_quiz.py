@@ -1,9 +1,10 @@
 from sqlalchemy.orm import Session, selectinload
 from app.models.quiz import Quiz, Question, Option
-from app.schemas.quiz import QuizCreate
+from app.schemas.quiz import QuizCreate, QuestionCreate, OptionCreate
+from typing import Optional
 
 class CRUDQuiz:
-    def get(self, db: Session, id: int) -> Quiz | None:
+    def get(self, db: Session, id: int) -> Optional[Quiz]:
         """
         Получение квиза по ID с принудительной "жадной" загрузкой (eager loading)
         всех связанных вопросов и, для каждого вопроса, всех связанных опций.
@@ -18,7 +19,7 @@ class CRUDQuiz:
         Создание квиза с рекурсивным созданием всех вложенных
         вопросов и вариантов ответов.
         """
-        db_quiz = Quiz(
+        db_quiz: Quiz = Quiz(
             title=obj_in.title,
             description=obj_in.description
         )
@@ -29,7 +30,7 @@ class CRUDQuiz:
         
         if obj_in.questions:
             for question_in in obj_in.questions:
-                db_question = Question(
+                db_question: Question = Question(
                     text=question_in.text,
                     description=question_in.description,
                     question_type=question_in.question_type,
@@ -37,7 +38,7 @@ class CRUDQuiz:
                 )
                 if question_in.options:
                     for option_in in question_in.options:
-                        db_option = Option(
+                        db_option: Option = Option(
                             text=option_in.text,
                             price_impact=option_in.price_impact,
                             order=option_in.order

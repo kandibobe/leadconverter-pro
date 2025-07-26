@@ -4,7 +4,7 @@ from app.schemas.lead import LeadCreate
 
 class CRUDLead:
     def create(self, db: Session, *, obj_in: LeadCreate) -> Lead:
-        db_obj = Lead(
+        db_obj: Lead = Lead(
             email=obj_in.email,
             final_price=obj_in.final_price,
             answers_data=obj_in.answers_data
