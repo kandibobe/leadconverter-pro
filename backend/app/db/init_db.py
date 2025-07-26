@@ -1,11 +1,13 @@
 from sqlalchemy.orm import Session
+
 from app import crud, schemas
+from app.db.base import Base
+from app.db.session import engine
 
 def init_db(db: Session) -> None:
-    """
-    Инициализация базы данных.
-    Проверяет наличие квиза и, если его нет, создает его.
-    """
+    """Create tables and seed initial quiz data if missing."""
+    # Ensure all tables exist. Alembic should be used in production.
+    Base.metadata.create_all(bind=engine)
     quiz = crud.quiz.get(db, id=1)
     if quiz:
         print("Quiz data already exists. Skipping seeding.")

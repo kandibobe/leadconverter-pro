@@ -4,6 +4,12 @@ from typing import List, Any
 
 from app import crud, schemas
 from app.api import deps
+ codex/fix-db-session-management-in-on_startup
+
+router = APIRouter()
+
+@router.get("/", response_model=List[schemas.LeadOut])
+
 from app.services import pdf_generator # Импортируем наш новый сервис
 
 router = APIRouter()
@@ -36,11 +42,16 @@ def submit_lead(
 
 
 @router.get("/", response_model=List[schemas.lead.LeadOut])
+ main
 def read_leads(
     db: Session = Depends(deps.get_db),
     skip: int = 0,
     limit: int = 100,
+ codex/fix-db-session-management-in-on_startup
+):
+
 ) -> Any:
+ main
     """
     Получить список всех лидов для админ-панели.
     """

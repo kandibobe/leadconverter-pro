@@ -1,13 +1,10 @@
 from typing import Generator
+
+from sqlalchemy.orm import Session
+
 from app.db.session import SessionLocal
 
-def get_db() -> Generator:
-    """
-    Зависимость (dependency), которая предоставляет сессию базы данных для одного запроса.
-    Гарантирует, что сессия будет закрыта после выполнения запроса.
-    """
-    try:
-        db = SessionLocal()
+def get_db() -> Generator[Session, None, None]:
+    """Provide a transactional database session."""
+    with SessionLocal() as db:
         yield db
-    finally:
-        db.close()
