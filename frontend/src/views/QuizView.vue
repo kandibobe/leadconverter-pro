@@ -14,8 +14,12 @@ import Spinner from '@/components/Spinner.vue';  // <-- ИСПРАВЛЕННЫЙ
 import PriceDisplay from '../components/quiz/PriceDisplay.vue';
 import QuestionCard from '../components/quiz/QuestionCard.vue';
 import LeadFormModal from '../components/quiz/LeadFormModal.vue';
+ codex/fix-import-path-for-spinner-component
+import LoadingSpinner from '@/components/quiz/ui/LoadingSpinner.vue';
+
 import Spinner from '../components/quiz/ui/Spinner.vue'; // <-- Исправляем путь к спиннеру
 ff32d054763a076e239d8b550239cda8bc239e4e
+main
 
 const quizStore = useQuizStore();
 const showModal = ref(false);
@@ -43,8 +47,20 @@ function handleLeadSubmitted() {
       <Spinner />
     </div>
     
+ codex/fix-import-path-for-spinner-component
+    <!-- Используем спиннер вместо текста -->
+    <LoadingSpinner v-if="quizStore.isLoading" />
+
+    <div v-else-if="quizStore.error" class="error-message">{{ quizStore.error }}</div>
+
+    <div v-else-if="quizStore.isLeadSubmittedSuccessfully" class="success-container">
+      <h2>Спасибо!</h2>
+      <p>Ваша заявка принята. Мы скоро свяжемся с вами и вышлем детализированную смету на ваш email.</p>
+      <RouterLink to="/" class="back-to-home">Вернуться на главную</RouterLink>
+
     <div v-else-if="quizStore.error">
       <p class="error-message">Ошибка загрузки квиза: {{ quizStore.error }}</p>
+ main
     </div>
 
     <div v-else-if="quizStore.quiz">
