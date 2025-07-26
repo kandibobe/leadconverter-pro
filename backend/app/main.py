@@ -21,4 +21,8 @@ app.include_router(api_router, prefix=settings.API_V1_STR)
 
 @app.get("/")
 def read_root():
+ codex/add-newline-at-eof-for-project-files
+    return {"message": f"Welcome to {settings.PROJECT_NAME}"}
+
     return {"message": "Welcome to LeadConverter Pro API"}
+ main

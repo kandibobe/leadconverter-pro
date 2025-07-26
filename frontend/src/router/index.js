@@ -60,4 +60,8 @@ const router = createRouter({
   ]
 })
 
+ codex/add-newline-at-eof-for-project-files
+export default router;
+
 export default router
+ main

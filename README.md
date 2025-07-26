@@ -1,5 +1,6 @@
 # leadconverter-pro
 
+
 ## Installation
 
 1. Clone the repository:
@@ -60,4 +61,4 @@ npm run dev
 
 ### Testing
 
-This repository does not include automated tests. Linting and formatting scripts are available in the frontend `package.json`.
+
