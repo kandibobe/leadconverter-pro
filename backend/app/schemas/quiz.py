@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import List, Optional
 
 # --- Схемы для Вариантов Ответов (Option) ---
@@ -28,7 +28,7 @@ class QuestionCreate(QuestionBase):
 
 class Question(QuestionBase):
     id: int
-    options: List[Option] = []
+    options: List[Option] = Field(default_factory=list)
 
     class Config:
         from_attributes = True
@@ -44,7 +44,7 @@ class QuizCreate(QuizBase):
 # Эта схема будет использоваться для ответа API: полный квиз со всеми вопросами и вариантами
 class Quiz(QuizBase):
     id: int
-    questions: List[Question] = []
+    questions: List[Question] = Field(default_factory=list)
 
     class Config:
         from_attributes = True
