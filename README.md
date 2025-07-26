@@ -1,5 +1,15 @@
 # leadconverter-pro
 
+
+
+## Database initialization
+
+When the backend starts it runs `app.initial_data.init_db`. This function
+creates all database tables and seeds the initial quiz data if needed.
+
+The previously unused module `app.db.init_db` has been removed so that only a
+single initialization entry point remains.
+=======
 ## Installation
 
 1. Clone the repository:
@@ -60,4 +70,3 @@ npm run dev
 
 ### Testing
 
-This repository does not include automated tests. Linting and formatting scripts are available in the frontend `package.json`.
