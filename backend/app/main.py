@@ -1,23 +1,19 @@
-# backend/app/main.py
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from app.api.v1.api import api_router
-from app.core.config import settings
+from app.api.v1.endpoints import quiz
+from app.database import Base, engine
 
-app = FastAPI(title=settings.PROJECT_NAME)
+# Создаем таблицы в БД (для первого запуска)
+# В продакшене лучше использовать Alembic
+Base.metadata.create_all(bind=engine)
 
-# Настройка CORS
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[str(origin) for origin in settings.BACKEND_CORS_ORIGINS],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+app = FastAPI(
+    title="LeadConverter Pro API",
+    description="API для интерактивного квиз-калькулятора.",
+    version="1.0.0"
 )
 
-# НЕ ИСПОЛЬЗУЕМ БОЛЬШЕ Base.metadata.create_all(bind=engine)
-
-app.include_router(api_router, prefix=settings.API_V1_STR)
+# Подключаем роутеры
+app.include_router(quiz.router, prefix="/api/v1", tags=["Quiz & Leads"])
 
 @app.get("/")
 def read_root():

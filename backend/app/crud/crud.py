@@ -1,17 +1,33 @@
-# В файле backend/app/crud.py
+from sqlalchemy.orm import Session
+from . import models, schemas
 
-# ... (существующие функции get_quiz, create_lead)
+def get_quiz(db: Session, quiz_id: int):
+    """Получение квиза со всеми вопросами и вариантами ответов."""
+    return db.query(models.Quiz).filter(models.Quiz.id == quiz_id).first()
 
-from sqlalchemy import func
-from . import models
-
-def get_leads(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Lead).offset(skip).limit(limit).all()
-
-def get_dashboard_metrics(db: Session):
-    total_leads = db.query(models.Lead).count()
-    average_check_query = db.query(func.avg(models.Lead.final_price)).scalar()
-    # Обработка случая, когда лидов еще нет
-    average_check = float(average_check_query) if average_check_query is not None else 0.0
+def create_lead(db: Session, lead_data: schemas.LeadCreate) -> models.Lead:
+    """Создание лида на основе ответов."""
     
-    return {"total_leads": total_leads, "average_check": average_check}
+    # Рассчитываем итоговую стоимость
+    total_cost = 0.0
+    details_answers = {}
+    for answer in lead_data.answers:
+        option = db.query(models.Option).filter(models.Option.id == answer.option_id).first()
+        if option:
+            total_cost += option.value
+            question_text = option.question.text
+            details_answers[question_text] = option.text
+
+    # Создаем запись в БД
+    db_lead = models.Lead(
+        client_email=lead_data.client_email,
+        estimated_cost=total_cost,
+        details={
+            "quiz_id": lead_data.quiz_id,
+            "answers": details_answers
+        }
+    )
+    db.add(db_lead)
+    db.commit()
+    db.refresh(db_lead)
+    return db_lead

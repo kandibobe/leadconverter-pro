@@ -1,0 +1,30 @@
+# .dockerignore (ЕДИНЫЙ ДЛЯ ВСЕГО ПРОЕКТА)
+
+# Исключаем служебные файлы Git
+.git
+.gitignore
+
+# Исключаем служебные файлы IDE
+.vscode/
+.idea/
+
+# Исключаем кэши Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Исключаем файлы окружения (они пробрасываются через docker-compose)
+.env
+*.env
+
+# Исключаем зависимости Node.js (они устанавливаются ВНУТРИ контейнера)
+node_modules/
+frontend/node_modules/
+
+# Исключаем артефакты сборки
+dist/
+frontend/dist/
+
+# Логи и прочее
+npm-debug.log*
