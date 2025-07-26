@@ -7,7 +7,7 @@ import { useQuizStore } from '@/stores/quiz.store'; // <-- ИСПОЛЬЗУЕМ 
 // ИСПРАВЛЯЕМ ВСЕ ПУТИ НА АЛИАСЫ '@'
 import QuestionCard from '@/components/quiz/QuestionCard.vue';
 import LeadFormModal from '@/components/quiz/LeadFormModal.vue';
-import Spinner from '@/components/ui/Spinner.vue'; // <-- ИСПРАВЛЕННЫЙ ПУТЬ
+import Spinner from '@/components/Spinner.vue';  // <-- ИСПРАВЛЕННЫЙ ПУТЬ
 
 const quizStore = useQuizStore();
 const showModal = ref(false);
