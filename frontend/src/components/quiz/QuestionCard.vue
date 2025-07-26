@@ -2,7 +2,7 @@
 import OptionItem from './OptionItem.vue';
 import { useQuizStore } from '../../stores/quiz.store.js';
 
-const props = defineProps({
+defineProps({
   question: { type: Object, required: true },
 });
 

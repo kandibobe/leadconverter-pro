@@ -7,7 +7,7 @@ import { useQuizStore } from '../stores/quiz.store.js';
 import PriceDisplay from '../components/quiz/PriceDisplay.vue';
 import QuestionCard from '../components/quiz/QuestionCard.vue';
 import LeadFormModal from '../components/quiz/LeadFormModal.vue';
-import Spinner from '../components/quiz/ui/Spinner.vue'; // <-- Исправляем путь к спиннеру
+import LoadingSpinner from '@/components/quiz/ui/LoadingSpinner.vue';
 
 const route = useRoute();
 const quizStore = useQuizStore();
@@ -23,7 +23,7 @@ onMounted(() => {
     <LeadFormModal v-if="quizStore.isLeadModalVisible" />
     
     <!-- Используем спиннер вместо текста -->
-    <Spinner v-if="quizStore.isLoading" />
+    <LoadingSpinner v-if="quizStore.isLoading" />
 
     <div v-else-if="quizStore.error" class="error-message">{{ quizStore.error }}</div>
 
