@@ -21,6 +21,6 @@ COPY --from=builder /app/requirements.txt .
 RUN pip install --no-cache /wheels/*
 
 # Копируем исходный код приложения
-COPY ./app /app/app
+COPY ./app /app
 
 # Команда для запуска будет передана через docker-compose
