@@ -29,38 +29,40 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted } from 'vue'
+import adminLeadService from '../../services/adminLead.service.js'
 
-const leads = ref([]);
-const loading = ref(true);
-const error = ref(null);
-
-const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1';
+const leads = ref([])
+const loading = ref(true)
+const error = ref(null)
 
 const fetchLeads = async () => {
   try {
-    const response = await fetch(`${API_URL}/leads/`);
-    if (!response.ok) {
-      throw new Error('Не удалось загрузить список лидов');
-    }
-    leads.value = await response.json();
+    const response = await adminLeadService.getLeads()
+    leads.value = response.data
   } catch (e) {
-    error.value = e.message;
+    error.value = e.message
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 
 const formatCurrency = (value) => {
-  return new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB' }).format(value);
-};
+  return new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB' }).format(value)
+}
 
 const formatDate = (dateString) => {
-  const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-  return new Date(dateString).toLocaleDateString('ru-RU', options);
-};
+  const options = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }
+  return new Date(dateString).toLocaleDateString('ru-RU', options)
+}
 
-onMounted(fetchLeads);
+onMounted(fetchLeads)
 </script>
 
 <style scoped>
@@ -69,9 +71,10 @@ onMounted(fetchLeads);
   border-collapse: collapse;
   margin-top: 20px;
   background-color: white;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
 }
-.leads-table th, .leads-table td {
+.leads-table th,
+.leads-table td {
   padding: 12px 15px;
   border-bottom: 1px solid #ddd;
   text-align: left;
@@ -84,7 +87,8 @@ onMounted(fetchLeads);
 .leads-table tbody tr:hover {
   background-color: #f9f9f9;
 }
-.loading, .error {
+.loading,
+.error {
   margin-top: 20px;
   font-size: 1.2em;
 }
