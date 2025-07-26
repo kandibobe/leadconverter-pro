@@ -1,15 +1,16 @@
+// @ts-check
 import apiClient from './apiClient.js';
+/** @typedef {import('../types.js').Quiz} Quiz */
 
 class QuizService {
   /**
-   * Загружает полную структуру квиза с сервера.
-   * @param {number} id - ID квиза для загрузки.
-   * @returns {Promise<object>} - Промис, который разрешается данными квиза.
+   * Fetch quiz structure by id
+   * @param {number} id
+   * @returns {Promise<import('axios').AxiosResponse<Quiz>>}
    */
   getQuizById(id) {
     return apiClient.get(`/api/v1/quizzes/${id}`);
   }
 }
 
-// Экспортируем синглтон-экземпляр сервиса.
 export default new QuizService();

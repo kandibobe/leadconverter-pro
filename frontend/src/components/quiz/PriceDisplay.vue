@@ -1,8 +1,10 @@
 <script setup>
 import { computed } from 'vue';
 import { useQuizStore } from '../../stores/quiz.store.js';
+import { useI18n } from 'vue-i18n';
 
 const quizStore = useQuizStore();
+const { t } = useI18n();
 
 // Используем computed, чтобы цена форматировалась красиво
 const formattedPrice = computed(() => {
@@ -16,7 +18,7 @@ const formattedPrice = computed(() => {
 
 <template>
   <div class="price-display">
-    <span class="price-label">Предварительная стоимость:</span>
+    <span class="price-label">{{ t('quiz.preliminary_price') }}</span>
     <span class="price-value">{{ formattedPrice }}</span>
   </div>
 </template>

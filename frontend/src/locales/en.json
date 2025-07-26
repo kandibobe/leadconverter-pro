@@ -1,0 +1,23 @@
+{
+  "quiz": {
+    "error_load": "Failed to load the quiz.",
+    "thanks": "Thanks for your answers!",
+    "get_estimate": "Get estimate",
+    "preliminary_price": "Preliminary price:"
+  },
+  "lead_modal": {
+    "title": "Get detailed estimate",
+    "description": "Enter your email and we'll send you a detailed calculation with all work and materials.",
+    "email_empty": "Email is required.",
+    "submit_error": "An error occurred. Please check your email and try again.",
+    "sending": "Sending...",
+    "get_estimate": "Get estimate",
+    "success": "Request sent. Check your inbox."
+  },
+  "errors": {
+    "NETWORK": "Network error. Please check your connection.",
+    "NOT_FOUND": "Quiz not found.",
+    "UNKNOWN": "Unknown error",
+    "SUBMIT": "An error occurred. Please try later."
+  }
+}

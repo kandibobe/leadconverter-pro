@@ -1,15 +1,21 @@
+// @ts-check
 import { defineStore } from 'pinia';
 import quizService from '../services/quiz.service.js';
 import leadService from '../services/lead.service.js';
+/** @typedef {import('../types.js').Quiz} Quiz */
+/** @typedef {import('../types.js').LeadData} LeadData */
 
 const getInitialState = () => ({
+  /** @type {Quiz|null} */
   quizData: null,
   isLoading: false,
+  /** @type {string|null} */
   error: null,
   selectedOptions: {},
   area: 50,
   isLeadModalVisible: false,
   isSubmittingLead: false,
+  /** @type {string|null} */
   leadSubmissionError: null,
   isLeadSubmittedSuccessfully: false,
 });
@@ -59,8 +65,14 @@ export const useQuizStore = defineStore('quiz', {
         const response = await quizService.getQuizById(id);
         this.quizData = response.data;
       } catch (err) {
-        this.error = 'Не удалось загрузить квиз.';
         console.error(err);
+        if (!err.response) {
+          this.error = 'NETWORK';
+        } else if (err.response.status === 404) {
+          this.error = 'NOT_FOUND';
+        } else {
+          this.error = 'UNKNOWN';
+        }
       } finally {
         this.isLoading = false;
       }
@@ -89,8 +101,8 @@ export const useQuizStore = defineStore('quiz', {
         this.closeLeadModal();
         this.isLeadSubmittedSuccessfully = true;
       } catch (error) {
-        console.error("Lead submission failed:", error);
-        this.leadSubmissionError = "Произошла ошибка. Пожалуйста, проверьте email и попробуйте снова.";
+        console.error('Lead submission failed:', error);
+        this.leadSubmissionError = error.response ? 'SUBMIT' : 'NETWORK';
       } finally {
         this.isSubmittingLead = false;
       }
