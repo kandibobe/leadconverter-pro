@@ -1,17 +1,8 @@
 from fastapi import FastAPI
 from app.core.config import settings
-from app.api.v1.endpoints import health, quizzes
-from app.db import session, init_db
+from app.api.v1.endpoints import health, quizzes, leads
 from app.api import deps
-
-# ИМПОРТИРУЕМ МОДЕЛИ ЗДЕСЬ.
-# Это гарантирует, что SQLAlchemy "увидит" их до того,
-# как мы попросим его создать таблицы. Это разрывает цикл импортов.
-from app.models import quiz as quiz_model
-
-# Создаем таблицы в БД.
-# Теперь, когда все модели импортированы, Base.metadata знает обо всех таблицах.
-session.Base.metadata.create_all(bind=session.engine)
+from app import initial_data # <-- Импортируем наш инициализатор
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -22,16 +13,16 @@ app = FastAPI(
 def on_startup() -> None:
     """
     Выполняется один раз при старте приложения.
-    Инициализирует базу данных начальными данными.
+    Инициализирует базу данных.
     """
-    print("Application startup: Initializing DB...")
+    # Получаем сессию и передаем ее в наш единый, правильный инициализатор
     db = next(deps.get_db())
-    init_db.init_db(db)
-    print("Startup complete.")
+    initial_data.init_db(db)
 
 # Подключаем роутеры API
 app.include_router(health.router, prefix=settings.API_V1_STR, tags=["Health"])
 app.include_router(quizzes.router, prefix=f"{settings.API_V1_STR}/quizzes", tags=["Quizzes"])
+app.include_router(leads.router, prefix=f"{settings.API_V1_STR}/leads", tags=["Leads"])
 
 @app.get("/", tags=["Root"])
 def read_root():
