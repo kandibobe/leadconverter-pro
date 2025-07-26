@@ -16,6 +16,9 @@ class Settings(BaseSettings):
     # Настройки базы данных
     DATABASE_URL: str = os.getenv("DATABASE_URL", "")
 
+    # CORS settings
+    BACKEND_CORS_ORIGINS: list[str] = [origin.strip() for origin in os.getenv("BACKEND_CORS_ORIGINS", "*").split(",") if origin]
+
     # Настройки безопасности
     SECRET_KEY: str
     ALGORITHM: str = "HS256"
