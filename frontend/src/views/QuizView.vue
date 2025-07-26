@@ -1,27 +1,24 @@
-<!-- /app/src/views/QuizView.vue -->
+<!-- /frontend/src/views/QuizView.vue -->
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { useQuizStore } from '@/stores/quiz.store'; // <-- ИСПОЛЬЗУЕМ АЛИАС
+import { useQuizStore } from '@/stores/quiz.store';
 
-HEAD
-// ИСПРАВЛЯЕМ ВСЕ ПУТИ НА АЛИАСЫ '@'
+// --- ФИНАЛЬНЫЕ, ПРАВИЛЬНЫЕ ПУТИ СОГЛАСНО ВАШЕМУ СКРИНШОТУ ---
+
+// Эти компоненты лежат в /components/quiz/
 import QuestionCard from '@/components/quiz/QuestionCard.vue';
 import LeadFormModal from '@/components/quiz/LeadFormModal.vue';
-import Spinner from '@/components/Spinner.vue';  // <-- ИСПРАВЛЕННЫЙ ПУТЬ
+import PriceDisplay from '@/components/quiz/PriceDisplay.vue';
 
-// Импортируем все компоненты
-import PriceDisplay from '../components/quiz/PriceDisplay.vue';
-import QuestionCard from '../components/quiz/QuestionCard.vue';
-import LeadFormModal from '../components/quiz/LeadFormModal.vue';
-import Spinner from '../components/quiz/ui/Spinner.vue'; // <-- Исправляем путь к спиннеру
-ff32d054763a076e239d8b550239cda8bc239e4e
+// А этот компонент лежит в /components/quiz/ui/
+import Spinner from '@/components/quiz/ui/Spinner.vue';
+
 
 const quizStore = useQuizStore();
 const showModal = ref(false);
 
 onMounted(() => {
-  // Загружаем данные для квиза с ID=1 при монтировании компонента
   quizStore.fetchQuiz(1); 
 });
 
@@ -31,54 +28,5 @@ function handleQuizCompleted() {
 
 function handleLeadSubmitted() {
   showModal.value = false;
-  // Здесь можно добавить логику "Спасибо за вашу заявку!"
-  // Например, перенаправить на другую страницу
-  // router.push('/thank-you');
 }
 </script>
-
-<template>
-  <div class="quiz-container">
-    <div v-if="quizStore.isLoading">
-      <Spinner />
-    </div>
-    
-    <div v-else-if="quizStore.error">
-      <p class="error-message">Ошибка загрузки квиза: {{ quizStore.error }}</p>
-    </div>
-
-    <div v-else-if="quizStore.quiz">
-      <h1>{{ quizStore.quiz.name }}</h1>
-      <p>{{ quizStore.quiz.description }}</p>
-      
-      <QuestionCard 
-        v-if="quizStore.currentQuestion"
-        :question="quizStore.currentQuestion"
-        @answer-selected="quizStore.selectAnswer"
-      />
-      
-      <div v-else>
-        <h2>Спасибо за ответы!</h2>
-        <button @click="handleQuizCompleted">Получить смету</button>
-      </div>
-    </div>
-
-    <LeadFormModal 
-      :show="showModal" 
-      @close="showModal = false"
-      @submitted="handleLeadSubmitted"
-    />
-  </div>
-</template>
-
-<style scoped>
-/* Стили остаются без изменений */
-.quiz-container {
-  max-width: 800px;
-  margin: 2rem auto;
-  padding: 2rem;
-}
-.error-message {
-  color: red;
-}
-</style>
