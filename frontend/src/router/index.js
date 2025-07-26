@@ -3,7 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import QuizView from '../views/QuizView.vue'
 import AdminLayout from '../layouts/AdminLayout.vue' // <-- Импортируем новый лэйаут
-import DashboardView from '../views/admin/DashboardView.vue' // <-- Импортируем страницы админки
+import DashboardView from '../views/DashboardView.vue' // <-- Импортируем страницы админки
 import LeadsView from '../views/admin/LeadsView.vue'
 
 // Простая проверка "авторизации" для MVP
