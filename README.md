@@ -26,6 +26,24 @@ SECRET_KEY=your_super_secret_key_32_chars_long_replace_me
 
 Other variables include database credentials (`POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`) and the base URL used by the frontend (`VITE_API_BASE_URL`). See `.env.example` for all available options.
 
+### Logging configuration
+
+The backend uses the Python `logging` module. The log level is controlled by the
+`LOG_LEVEL` environment variable. Example value in `.env`:
+
+```env
+LOG_LEVEL=DEBUG
+```
+
+Logging is initialized in `app/main.py` with:
+
+```python
+logging.basicConfig(
+    level=getattr(logging, settings.LOG_LEVEL.upper(), logging.INFO),
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+)
+```
+
 ## Development
 
 The project is designed to run via Docker Compose which starts PostgreSQL, the FastAPI backend and the Vue frontend in watch mode.
