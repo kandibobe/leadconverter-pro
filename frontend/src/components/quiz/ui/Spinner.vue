@@ -5,7 +5,11 @@
 </template>
 
 <script setup>
+ codex/improve-error-handling-and-add-i18n-support
 defineOptions({ name: 'UiSpinner' })
+
+defineOptions({ name: 'AppSpinner' });
+ main
 </script>
 
 <style scoped>

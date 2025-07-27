@@ -9,9 +9,12 @@ import { useQuizStore } from '@/stores/quiz.store.js';
 import { ref, onMounted } from 'vue';
 import { useQuizStore } from '@/stores/quiz.store';
 
+ codex/improve-error-handling-and-add-i18n-support
 // --- ФИНАЛЬНЫЕ, ПРАВИЛЬНЫЕ ПУТИ СОГЛАСНО ВАШЕМУ СКРИНШОТУ ---
 
 // Эти компоненты лежат в /components/quiz/
+ main
+
  main
 import QuestionCard from '@/components/quiz/QuestionCard.vue';
 import PriceDisplay from '@/components/quiz/PriceDisplay.vue';
@@ -22,16 +25,18 @@ import { useI18n } from 'vue-i18n';
 const Spinner = defineAsyncComponent(() => import('@/components/quiz/ui/Spinner.vue'));
 =======
 import PriceDisplay from '@/components/quiz/PriceDisplay.vue';
-
-// А этот компонент лежит в /components/quiz/ui/
 import Spinner from '@/components/quiz/ui/Spinner.vue';
 
+ codex/improve-error-handling-and-add-i18n-support
  main
 
 const { t } = useI18n();
+=======
+ main
 const quizStore = useQuizStore();
 
 onMounted(() => {
+ codex/improve-error-handling-and-add-i18n-support
  codex/improve-error-handling-and-add-i18n-support
   quizStore.fetchQuiz(1);
 });
@@ -82,6 +87,9 @@ onMounted(() => {
 
 
   quizStore.fetchQuiz(1); 
+
+  quizStore.fetchQuiz(1);
+ main
 });
 
 function handleQuizCompleted() {
@@ -92,4 +100,52 @@ function handleLeadSubmitted() {
   showModal.value = false;
 }
 </script>
+ codex/improve-error-handling-and-add-i18n-support
+ main
+
+
+<template>
+  <div class="quiz-container">
+    <PriceDisplay v-if="quizStore.quiz" />
+    <div v-if="quizStore.isLoading">
+      <Spinner />
+    </div>
+
+    <div v-else-if="quizStore.error">
+      <p class="error-message">Ошибка загрузки квиза: {{ quizStore.error }}</p>
+    </div>
+
+    <div v-else-if="quizStore.quiz">
+      <h1>{{ quizStore.quiz.name }}</h1>
+      <p>{{ quizStore.quiz.description }}</p>
+
+      <QuestionCard
+        v-if="quizStore.currentQuestion"
+        :question="quizStore.currentQuestion"
+      />
+
+      <div v-else>
+        <h2>Спасибо за ответы!</h2>
+        <button @click="handleQuizCompleted">Получить смету</button>
+      </div>
+    </div>
+
+    <LeadFormModal
+      v-if="showModal"
+      @close="showModal = false"
+      @submitted="handleLeadSubmitted"
+    />
+  </div>
+</template>
+
+<style scoped>
+.quiz-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+}
+.error-message {
+  color: red;
+}
+</style>
  main
