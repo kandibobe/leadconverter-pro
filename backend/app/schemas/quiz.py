@@ -24,7 +24,7 @@ class QuestionBase(BaseModel):
     order: int
 
 class QuestionCreate(QuestionBase):
-    options: List[OptionCreate]
+    options: List[OptionCreate] = Field(default_factory=list)
 
 class Question(QuestionBase):
     id: int
@@ -39,7 +39,7 @@ class QuizBase(BaseModel):
     description: Optional[str] = None
 
 class QuizCreate(QuizBase):
-    questions: List[QuestionCreate]
+    questions: List[QuestionCreate] = Field(default_factory=list)
 
 # Эта схема будет использоваться для ответа API: полный квиз со всеми вопросами и вариантами
 class Quiz(QuizBase):

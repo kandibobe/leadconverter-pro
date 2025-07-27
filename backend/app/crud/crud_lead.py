@@ -4,6 +4,13 @@ from app.models import quiz as quiz_model
 from app.schemas import lead as lead_schema
 
 class CRUDLead:
+ codex/fix-schemas-to-use-default_factory-in-pydantic
+    def create(self, db: Session, *, obj_in: LeadCreate) -> Lead:
+        db_obj: Lead = Lead(
+            email=obj_in.email,
+            final_price=obj_in.final_price,
+            answers_data=obj_in.answers_data
+
     def create_with_calculation(self, db: Session, *, obj_in: lead_schema.LeadCreateIn) -> lead_model.Lead:
         """
         Создает лид, производя расчеты на основе ответов.
@@ -46,6 +53,7 @@ class CRUDLead:
             client_email=obj_in.client_email,
             final_price=final_price,
             answers_details=answers_details
+ main
         )
 
         db_obj = lead_model.Lead(**lead_create_data.model_dump())
