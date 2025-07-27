@@ -1,8 +1,12 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, defineAsyncComponent } from 'vue';
 import { useQuizStore } from '../../stores/quiz.store.js';
+import { useI18n } from 'vue-i18n';
+
+const Spinner = defineAsyncComponent(() => import('./ui/Spinner.vue'));
 
 const quizStore = useQuizStore();
+const { t } = useI18n();
 const email = ref('');
 
 function closeModal() {
@@ -11,7 +15,7 @@ function closeModal() {
 
 async function handleSubmit() {
   if (!email.value) {
-    quizStore.leadSubmissionError = "Email не может быть пустым.";
+    quizStore.leadSubmissionError = 'email_empty';
     return;
   }
   await quizStore.submitLead(email.value);
@@ -22,8 +26,8 @@ async function handleSubmit() {
   <div class="modal-overlay" @click.self="closeModal">
     <div class="modal-content">
       <button class="close-button" @click="closeModal">×</button>
-      <h3>Получить детализированную смету</h3>
-      <p>Введите ваш email, и мы отправим подробный расчет со всеми работами и материалами.</p>
+      <h3>{{ t('lead_modal.title') }}</h3>
+      <p>{{ t('lead_modal.description') }}</p>
       <form @submit.prevent="handleSubmit">
         <input
           v-model="email"
@@ -33,11 +37,14 @@ async function handleSubmit() {
           class="email-input"
         />
         <div v-if="quizStore.leadSubmissionError" class="error-text">
-          {{ quizStore.leadSubmissionError }}
+          {{ t(`errors.${quizStore.leadSubmissionError}`) }}
         </div>
         <button type="submit" class="submit-button" :disabled="quizStore.isSubmittingLead">
-          <span v-if="quizStore.isSubmittingLead">Отправка...</span>
-          <span v-else>Получить смету</span>
+          <template v-if="quizStore.isSubmittingLead">
+            <Spinner />
+            {{ t('lead_modal.sending') }}
+          </template>
+          <span v-else>{{ t('lead_modal.get_estimate') }}</span>
         </button>
       </form>
     </div>

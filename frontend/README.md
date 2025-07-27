@@ -33,3 +33,16 @@ npm run build
 ```sh
 npm run lint
 ```
+
+### i18n setup
+
+The frontend uses [vue-i18n](https://vue-i18n.intlify.dev/) for translations.
+To add it to a project run:
+
+```sh
+npm install vue-i18n
+```
+
+Locale files reside in `src/locales`. You can change default language in
+`src/main.js` by adjusting the `createI18n` options.
+
