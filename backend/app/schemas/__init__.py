@@ -1,6 +1,10 @@
+# Этот файл собирает все Pydantic модели (схемы) в одном месте.
+
+# Импортируем все схемы, связанные с квизами
 from .quiz import Quiz, QuizCreate, Question, QuestionCreate, Option, OptionCreate
-from .lead import (
-    LeadOut as Lead,           # схема ответа API
-    LeadCreateIn as LeadCreate,  # схема входящих данных
-    LeadCreateInternal         # используется в CRUD
-)
+
+# Импортируем все схемы, связанные с лидами
+from .lead import LeadOut, LeadCreateIn, LeadCreateInternal, LeadAnswerIn
+
+# Импортируем схемы для дашборда
+from .dashboard import DashboardMetrics

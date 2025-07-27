@@ -1,46 +1,48 @@
 from sqlalchemy.orm import Session
-from app.models import lead as lead_model
-from app.models import quiz as quiz_model
+from app.models import lead as lead_model, quiz as quiz_model
 from app.schemas import lead as lead_schema
 
 class CRUDLead:
-    def create_with_calculation(self, db: Session, *, obj_in: lead_schema.LeadCreateIn) -> lead_model.Lead:
-        """
-        Создает лид, производя расчеты на основе ответов.
-        Это - сердце бизнес-логики.
-        """
+    def calculate_price_from_answers(self, db: Session, *, answers_in: list[lead_schema.LeadAnswerIn]) -> float:
         base_price = 0.0
         area_multiplier = 1.0
-        answers_details = {}
 
-        # 1. Получаем все опции, которые выбрал пользователь, одним запросом
-        chosen_option_ids = [answer.option_id for answer in obj_in.answers if answer.option_id]
-        chosen_options = db.query(quiz_model.Option).filter(quiz_model.Option.id.in_(chosen_option_ids)).all()
-        options_map = {option.id: option for option in chosen_options}
+        chosen_option_ids = [answer.option_id for answer in answers_in if answer.option_id]
+        if chosen_option_ids:
+            chosen_options = db.query(quiz_model.Option).filter(quiz_model.Option.id.in_(chosen_option_ids)).all()
+            options_map = {option.id: option for option in chosen_options}
+        else:
+            options_map = {}
 
-        # 2. Обрабатываем ответы
-        for answer in obj_in.answers:
+        for answer in answers_in:
             question = db.query(quiz_model.Question).filter(quiz_model.Question.id == answer.question_id).first()
-            if not question:
-                continue
+            if not question: continue
 
-            # Если это вопрос типа "слайдер" (площадь)
             if question.question_type == 'slider':
                 try:
-                    area_multiplier = float(answer.value)
-                    answers_details[question.text] = f"{area_multiplier} м²"
+                    area_multiplier = float(answer.value) if answer.value else 1.0
                 except (ValueError, TypeError):
                     area_multiplier = 1.0
-            # Для всех остальных вопросов (радио, чекбоксы)
             elif answer.option_id in options_map:
-                option = options_map[answer.option_id]
-                base_price += option.value
-                answers_details[question.text] = option.text
+                base_price += options_map[answer.option_id].price_impact
         
-        # 3. Рассчитываем итоговую стоимость
-        final_price = base_price * area_multiplier
+        return base_price * area_multiplier
 
-        # 4. Создаем объект для сохранения в БД
+    def create_with_calculation(self, db: Session, *, obj_in: lead_schema.LeadCreateIn) -> lead_model.Lead:
+        final_price = self.calculate_price_from_answers(db=db, answers_in=obj_in.answers)
+        
+        answers_details = {}
+        for answer in obj_in.answers:
+            question = db.query(quiz_model.Question).filter(quiz_model.Question.id == answer.question_id).first()
+            if not question: continue
+            
+            if question.question_type == 'slider':
+                answers_details[question.text] = f"{answer.value} м²"
+            elif answer.option_id:
+                option = db.query(quiz_model.Option).filter(quiz_model.Option.id == answer.option_id).first()
+                if option:
+                    answers_details[question.text] = option.text
+
         lead_create_data = lead_schema.LeadCreateInternal(
             quiz_id=obj_in.quiz_id,
             client_email=obj_in.client_email,
@@ -55,7 +57,6 @@ class CRUDLead:
         return db_obj
 
     def get_multi(self, db: Session, *, skip: int = 0, limit: int = 100) -> list[lead_model.Lead]:
-        return db.query(lead_model.Lead).offset(skip).limit(limit).all()
-
+        return db.query(lead_model.Lead).order_by(lead_model.Lead.id.desc()).offset(skip).limit(limit).all()
 
 lead = CRUDLead()

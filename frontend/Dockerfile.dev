@@ -1,17 +1,15 @@
-# frontend/Dockerfile.dev
-
 FROM node:20-alpine
 
 WORKDIR /app
 
-# Копируем package.json и package-lock.json (если есть)
+# Копируем package.json и package-lock.json, если он есть
 COPY frontend/package*.json ./
 RUN npm install
 
-# Копируем остальные файлы фронтенда
+# Копируем все исходники фронтенда
 COPY frontend/ .
 
 EXPOSE 5173
 
-# Запускаем Vite в режиме разработки на всех интерфейсах
+# Запускаем Vite с передачей параметра --host
 CMD ["npm", "run", "dev", "--", "--host"]

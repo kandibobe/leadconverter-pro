@@ -1,15 +1,6 @@
-// /frontend/src/stores/quiz.store.js
-
 import { defineStore } from 'pinia';
-import axios from 'axios';
-
-// Настраиваем базовый URL для нашего API
-const apiClient = axios.create({
-  baseURL: 'http://localhost:8000/api/v1', // URL нашего бэкенда
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+import apiClient from '@/services/apiClient.js';
+import { debounce } from 'lodash-es'; // Для умной отправки запросов
 
 export const useQuizStore = defineStore('quiz', {
   state: () => ({
@@ -19,19 +10,13 @@ export const useQuizStore = defineStore('quiz', {
     isLoading: false,
     error: null,
     finalLead: null,
+    preliminaryPrice: 0,
+    isCalculating: false,
   }),
 
   getters: {
-    currentQuestion: (state) => {
-      if (state.quiz && state.quiz.questions) {
-        return state.quiz.questions[state.currentQuestionIndex];
-      }
-      return null;
-    },
-    isQuizFinished: (state) => {
-        if (!state.quiz) return false;
-        return state.currentQuestionIndex >= state.quiz.questions.length;
-    }
+    currentQuestion: (state) => state.quiz?.questions?.[state.currentQuestionIndex] ?? null,
+    isQuizFinished: (state) => state.quiz ? state.currentQuestionIndex >= state.quiz.questions.length : false,
   },
 
   actions: {
@@ -43,21 +28,48 @@ export const useQuizStore = defineStore('quiz', {
         this.quiz = response.data;
         this.currentQuestionIndex = 0;
         this.answers = [];
+        this.preliminaryPrice = 0;
       } catch (err) {
         this.error = 'Не удалось загрузить квиз. Попробуйте позже.';
-        console.error(err);
+        console.error('Fetch Quiz Error:', err);
       } finally {
         this.isLoading = false;
       }
     },
 
-    selectAnswer(answer) {
-        // answer должен быть объектом { question_id, option_id }
-        this.answers.push(answer);
-        if (this.currentQuestionIndex < this.quiz.questions.length) {
-            this.currentQuestionIndex++;
-        }
+    selectAnswer(answerPayload) {
+      const existingAnswerIndex = this.answers.findIndex(a => a.question_id === answerPayload.question_id);
+      if (existingAnswerIndex > -1) {
+        this.answers[existingAnswerIndex] = answerPayload;
+      } else {
+        this.answers.push(answerPayload);
+      }
+
+      if (answerPayload.option_id) { // Переходим дальше только если это не слайдер
+          if (this.currentQuestionIndex < this.quiz.questions.length) {
+              this.currentQuestionIndex++;
+          }
+      }
+      this.debouncedCalculatePrice();
     },
+    
+    // Дебаунс, чтобы не слать запрос на каждый чих слайдера
+    debouncedCalculatePrice: debounce(async function() {
+        if (!this.quiz) return;
+        this.isCalculating = true;
+        try {
+            const response = await apiClient.post('/quizzes/calculate', {
+                quiz_id: this.quiz.id,
+                client_email: 'temp@example.com', // email не важен для расчета
+                answers: this.answers,
+            });
+            this.preliminaryPrice = response.data;
+        } catch (error) {
+            console.error('Price calculation error:', error);
+        } finally {
+            this.isCalculating = false;
+        }
+    }, 300), // Задержка в 300 мс
 
     async submitLead(clientEmail) {
         this.isLoading = true;
@@ -67,14 +79,12 @@ export const useQuizStore = defineStore('quiz', {
             client_email: clientEmail,
             answers: this.answers,
         };
-
         try {
-            const response = await apiClient.post('/leads', leadData);
+            const response = await apiClient.post('/leads/submit', leadData);
             this.finalLead = response.data;
-            console.log('Лид успешно создан:', this.finalLead);
         } catch (err) {
             this.error = 'Произошла ошибка при отправке данных.';
-            console.error(err);
+            console.error('Submit Lead Error:', err);
         } finally {
             this.isLoading = false;
         }

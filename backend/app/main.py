@@ -1,26 +1,28 @@
 from fastapi import FastAPI
-
-from app.api.v1.endpoints import quiz
+from fastapi.middleware.cors import CORSMiddleware
+from app.api.v1.api import api_router
+from app.core.config import settings
 from app.db.init_db import init_db
 from app.db.session import SessionLocal
 
 app = FastAPI(
-    title="LeadConverter Pro API",
-    description="API для интерактивного квиз-калькулятора.",
-    version="1.0.0",
+    title=settings.PROJECT_NAME,
+    openapi_url=f"{settings.API_V1_STR}/openapi.json"
 )
 
+# Настройка CORS
+if settings.BACKEND_CORS_ORIGINS:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=[str(origin) for origin in settings.BACKEND_CORS_ORIGINS],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
 @app.on_event("startup")
-def on_startup() -> None:
-    """Initialize the database on application startup."""
-    # Use a context manager so the session always closes
+def on_startup():
     with SessionLocal() as db:
         init_db(db)
 
-# Подключаем роутеры
-app.include_router(quiz.router, prefix="/api/v1", tags=["Quiz & Leads"])
-
-@app.get("/")
-def read_root():
-    return {"message": "Welcome to LeadConverter Pro API"}
+app.include_router(api_router, prefix=settings.API_V1_STR)
