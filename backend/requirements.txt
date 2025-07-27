@@ -7,12 +7,12 @@ pydantic-settings==2.2.1
 
 # --- Database ---
 sqlalchemy==2.0.30
-psycopg2-binary==2.9.9
+psycopg2-binary>=2.9.9,<3.0
 
 # --- Security ---
 passlib[bcrypt]==1.7.4
 python-jose[cryptography]==3.3.0
 email-validator==2.1.1
 
-# --- PDF Generation (НОВОЕ) ---
-weasyprint==62.5
+# --- PDF Generation (ИСПРАВЛЕННАЯ ВЕРСИЯ) ---
+weasyprint==66.0

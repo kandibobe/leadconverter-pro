@@ -1,22 +1,17 @@
-# frontend/Dockerfile.dev (ИСПРАВЛЕННАЯ ВЕРСИЯ)
+# frontend/Dockerfile.dev
 
 FROM node:20-alpine
 
 WORKDIR /app
 
-# --- ИЗМЕНЕНИЯ ЗДЕСЬ ---
-# Копируем package.json из папки frontend в рабочую директорию /app
+# Копируем package.json и package-lock.json (если есть)
 COPY frontend/package*.json ./
-# --- КОНЕЦ ИЗМЕНЕНИЙ ---
-
 RUN npm install
 
-# --- ИЗМЕНЕНИЯ ЗДЕСЬ ---
-# Копируем все содержимое папки frontend в рабочую директорию /app
+# Копируем остальные файлы фронтенда
 COPY frontend/ .
-# --- КОНЕЦ ИЗМЕНЕНИЙ ---
 
 EXPOSE 5173
 
-# Эта команда запускает Vite и делает его доступным по сети
+# Запускаем Vite в режиме разработки на всех интерфейсах
 CMD ["npm", "run", "dev", "--", "--host"]

@@ -4,7 +4,7 @@ from typing import List, Any
 
 from app import crud, schemas
 from app.api import deps
- codex/fix-db-session-management-in-on_startup
+codex/fix-db-session-management-in-on_startup
 
 router = APIRouter()
 
@@ -42,7 +42,7 @@ def submit_lead(
 
 
 @router.get("/", response_model=List[schemas.lead.LeadOut])
- main
+main
 def read_leads(
     db: Session = Depends(deps.get_db),
     skip: int = 0,
@@ -50,10 +50,10 @@ def read_leads(
  codex/fix-db-session-management-in-on_startup
 ):
 
-) -> Any:
+
  main
-    """
+"""
     Получить список всех лидов для админ-панели.
     """
-    leads = crud.lead.get_multi(db, skip=skip, limit=limit)
-    return leads
+leads = crud.lead.get_multi(db, skip=skip, limit=limit)
+return leads
