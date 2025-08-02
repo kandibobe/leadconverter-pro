@@ -1,7 +1,6 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, Text
+from sqlalchemy import Column, Integer, String, Text, func
 from sqlalchemy.orm import relationship
 
-# Импорт Base теперь абсолютно безопасен, так как base.py больше ничего не импортирует.
 from app.db.base import Base
 
 class Quiz(Base):
@@ -9,6 +8,12 @@ class Quiz(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, index=True, nullable=False)
     description = Column(Text, nullable=True)
+    
+    # --- НОВЫЕ ПОЛЯ ДЛЯ МЕТРИК ---
+    views = Column(Integer, nullable=False, default=0, server_default='0')
+    starts = Column(Integer, nullable=False, default=0, server_default='0')
+    # -----------------------------
+
     questions = relationship("Question", back_populates="quiz", cascade="all, delete-orphan")
 
 class Question(Base):

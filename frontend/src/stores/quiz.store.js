@@ -12,6 +12,7 @@ export const useQuizStore = defineStore('quiz', {
     finalLead: null,
     preliminaryPrice: 0,
     isCalculating: false,
+    isStarted: false, // Флаг, чтобы событие старта отправлялось один раз
   }),
 
   getters: {
@@ -29,6 +30,13 @@ export const useQuizStore = defineStore('quiz', {
         this.currentQuestionIndex = 0;
         this.answers = [];
         this.preliminaryPrice = 0;
+        this.isStarted = false; // Сбрасываем флаг при загрузке
+
+        // --- ВЫЗОВ ДЛЯ ОТСЛЕЖИВАНИЯ ПРОСМОТРА ---
+        // Отправляем запрос и не ждем ответа (fire-and-forget)
+        apiClient.post(`/quizzes/${quizId}/view`);
+        // -----------------------------------------
+
       } catch (err) {
         this.error = 'Не удалось загрузить квиз. Попробуйте позже.';
         console.error('Fetch Quiz Error:', err);
@@ -38,6 +46,13 @@ export const useQuizStore = defineStore('quiz', {
     },
 
     selectAnswer(answerPayload) {
+      // --- ВЫЗОВ ДЛЯ ОТСЛЕЖИВАНИЯ НАЧАЛА РАСЧЕТА ---
+      if (!this.isStarted && this.quiz?.id) {
+        apiClient.post(`/quizzes/${this.quiz.id}/start`);
+        this.isStarted = true; // Гарантируем, что вызов будет только один раз
+      }
+      // ---------------------------------------------
+
       const existingAnswerIndex = this.answers.findIndex(a => a.question_id === answerPayload.question_id);
       if (existingAnswerIndex > -1) {
         this.answers[existingAnswerIndex] = answerPayload;
@@ -53,7 +68,6 @@ export const useQuizStore = defineStore('quiz', {
       this.debouncedCalculatePrice();
     },
     
-    // Дебаунс, чтобы не слать запрос на каждый чих слайдера
     debouncedCalculatePrice: debounce(async function() {
         if (!this.quiz) return;
         this.isCalculating = true;
@@ -69,7 +83,7 @@ export const useQuizStore = defineStore('quiz', {
         } finally {
             this.isCalculating = false;
         }
-    }, 300), // Задержка в 300 мс
+    }, 300),
 
     async submitLead(clientEmail) {
         this.isLoading = true;

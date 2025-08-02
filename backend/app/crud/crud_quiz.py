@@ -7,7 +7,6 @@ class CRUDQuiz:
         """
         Получение квиза по ID с принудительной "жадной" загрузкой (eager loading)
         всех связанных вопросов и, для каждого вопроса, всех связанных опций.
-        Это решает проблему ленивой загрузки и гарантирует, что Pydantic получит полные данные.
         """
         return db.query(Quiz).options(
             selectinload(Quiz.questions).selectinload(Question.options)
@@ -22,10 +21,6 @@ class CRUDQuiz:
             title=obj_in.title,
             description=obj_in.description
         )
-        
-        # Мы больше не добавляем объекты в сессию по одному.
-        # SQLAlchemy 1.4+ достаточно умен, чтобы обработать каскадное сохранение,
-        # если отношения настроены правильно (а они настроены).
         
         if obj_in.questions:
             for question_in in obj_in.questions:
@@ -50,5 +45,24 @@ class CRUDQuiz:
         db.refresh(db_quiz)
         return db_quiz
 
-# Создаем экземпляр нашего CRUD-класса для использования в API
+    # --- НОВЫЕ МЕТОДЫ ДЛЯ СЧЕТЧИКОВ ---
+    def increment_views(self, db: Session, *, quiz_id: int) -> Quiz | None:
+        """Увеличивает счетчик просмотров для квиза."""
+        quiz = db.query(Quiz).filter(Quiz.id == quiz_id).first()
+        if quiz:
+            quiz.views += 1
+            db.commit()
+            db.refresh(quiz)
+        return quiz
+
+    def increment_starts(self, db: Session, *, quiz_id: int) -> Quiz | None:
+        """Увеличивает счетчик начатых расчетов для квиза."""
+        quiz = db.query(Quiz).filter(Quiz.id == quiz_id).first()
+        if quiz:
+            quiz.starts += 1
+            db.commit()
+            db.refresh(quiz)
+        return quiz
+    # ------------------------------------
+
 quiz = CRUDQuiz()

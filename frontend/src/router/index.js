@@ -1,43 +1,33 @@
-// /frontend/src/router/index.js (ФИНАЛЬНАЯ ИСПРАВЛЕННАЯ ВЕРСИЯ)
-
 import { createRouter, createWebHistory } from 'vue-router';
-
-// Используем ТОЛЬКО надежные алиасы '@'
-import QuizView from '@/views/QuizView.vue';
-import AdminLayout from '@/layouts/AdminLayout.vue';
-import DashboardView from '@/views/admin/DashboardView.vue';
-import LeadsView from '@/views/admin/LeadsView.vue'; // Добавим страницу лидов
+import { useAuthStore } from '@/stores/auth.store';
+// ... (импорты компонентов)
+import LoginView from '@/views/LoginView.vue';
+import SettingsView from '@/views/admin/SettingsView.vue';
 
 const routes = [
-  // --- Клиентская часть ---
-  {
-    path: '/',
-    name: 'Quiz',
-    component: QuizView
-  },
-
-  // --- Админ-панель ---
+  { path: '/', name: 'Quiz', component: QuizView },
+  { path: '/login', name: 'Login', component: LoginView },
   {
     path: '/admin',
     component: AdminLayout,
+    meta: { requiresAuth: true },
     children: [
-      {
-        path: '', // Дашборд по адресу /admin
-        name: 'Dashboard',
-        component: DashboardView
-      },
-      {
-        path: 'leads', // Страница лидов по адресу /admin/leads
-        name: 'AdminLeads',
-        component: LeadsView
-      }
-    ]
-  }
+      { path: '', name: 'Dashboard', component: DashboardView },
+      { path: 'leads', name: 'AdminLeads', component: LeadsView },
+      { path: 'settings', name: 'AdminSettings', component: SettingsView },
+    ],
+  },
 ];
 
-const router = createRouter({
-  history: createWebHistory(),
-  routes
+const router = createRouter({ /* ... */ });
+
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore();
+  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+    next('/login');
+  } else {
+    next();
+  }
 });
 
 export default router;

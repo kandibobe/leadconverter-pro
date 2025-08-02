@@ -1,6 +1,8 @@
 <script setup>
 import { onMounted, computed, ref, watch } from 'vue';
 import { useQuizStore } from '@/stores/quiz.store';
+import LeadFormModal from '@/components/LeadFormModal.vue'; // <-- НОВОЕ
+const isModalOpen = ref(false); // <-- НОВОЕ
 
 const quizStore = useQuizStore();
 

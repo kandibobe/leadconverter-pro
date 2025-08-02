@@ -1,24 +1,13 @@
-from pydantic_settings import BaseSettings
-import os
-
+# ... (предыдущие настройки) ...
 class Settings(BaseSettings):
-    PROJECT_NAME: str = "LeadConverter Pro"
-    API_V1_STR: str = "/api/v1"
-    
-    # Database
-    DATABASE_URL: str
-
-    # CORS
-    BACKEND_CORS_ORIGINS: list[str] = ["http://localhost:5173"]
-
+    # ...
     # Mail settings
-    MAIL_USERNAME: str
-    MAIL_PASSWORD: str
     MAIL_FROM: str
-    MAIL_PORT: int
-    MAIL_SERVER: str
-    MAIL_STARTTLS: bool = True
-    MAIL_SSL_TLS: bool = False
+    SENDGRID_API_KEY: str
+
+    # Telegram settings
+    TELEGRAM_BOT_TOKEN: str
+    TELEGRAM_CHAT_ID: str
 
     class Config:
         case_sensitive = True

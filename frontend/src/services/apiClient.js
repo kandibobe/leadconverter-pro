@@ -1,15 +1,17 @@
 import axios from 'axios';
 
-// Создаем экземпляр axios с базовой конфигурацией.
-// Это лучшая практика, чтобы не настраивать URL и заголовки в каждом запросе.
 const apiClient = axios.create({
-  // URL нашего бэкенда берется из переменной окружения VITE_API_BASE_URL,
-  // которую мы определили в файле .env в корне проекта.
-  baseURL: import.meta.env.VITE_API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  baseURL: `${import.meta.env.VITE_API_BASE_URL}/api/v1`,
+  headers: { 'Content-Type': 'application/json' },
 });
 
-// Экспортируем созданный экземпляр, чтобы использовать его в других частях приложения.
+// Перехватчик для добавления токена в каждый запрос
+apiClient.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 export default apiClient;

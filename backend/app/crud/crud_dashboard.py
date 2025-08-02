@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from app.models.lead import Lead
+from app.models.quiz import Quiz # <-- ИМПОРТИРУЕМ МОДЕЛЬ КВИЗА
 from app.schemas.dashboard import DashboardMetrics
 
 def get_dashboard_metrics(db: Session) -> DashboardMetrics:
@@ -11,20 +12,25 @@ def get_dashboard_metrics(db: Session) -> DashboardMetrics:
     leads_count = db.query(Lead).count()
 
     # Считаем средний чек
-    # func.avg(Lead.final_price) возвращает среднее значение по колонке
     average_check_query = db.query(func.avg(Lead.final_price)).scalar()
-    # Если лидов нет, средний чек будет None, поэтому ставим 0.0
     average_check = average_check_query if average_check_query is not None else 0.0
 
-    # TODO: В будущем добавить логику для подсчета просмотров и начатых расчетов
-    # Это потребует сохранения событий в БД.
+    # --- НОВАЯ ЛОГИКА: СЧИТАЕМ ПРОСМОТРЫ И СТАРТЫ ---
+    # Суммируем просмотры и старты по всем квизам
+    total_views_query = db.query(func.sum(Quiz.views)).scalar()
+    total_starts_query = db.query(func.sum(Quiz.starts)).scalar()
     
+    total_views = total_views_query if total_views_query is not None else 0
+    total_starts = total_starts_query if total_starts_query is not None else 0
+    # ------------------------------------------------
+
     metrics = DashboardMetrics(
         leads_count=leads_count,
-        average_check=round(average_check, 2) # Округляем до 2 знаков
+        average_check=round(average_check, 2),
+        quiz_views=total_views, # <-- ПЕРЕДАЕМ В СХЕМУ
+        calculations_started=total_starts # <-- ПЕРЕДАЕМ В СХЕМУ
     )
     
     return metrics
 
-# Создаем экземпляр для импорта
 dashboard = get_dashboard_metrics

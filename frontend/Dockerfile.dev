@@ -2,14 +2,13 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Копируем package.json и package-lock.json, если он есть
-COPY frontend/package*.json ./
+# Пути относительны директории /frontend
+COPY package*.json ./
+
 RUN npm install
 
-# Копируем все исходники фронтенда
-COPY frontend/ .
+COPY . .
 
 EXPOSE 5173
 
-# Запускаем Vite с передачей параметра --host
-CMD ["npm", "run", "dev", "--", "--host"]
+CMD ["npm", "run", "dev"]

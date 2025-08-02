@@ -31,3 +31,19 @@ async def submit_lead(
 def read_leads(db: Session = Depends(deps.get_db), skip: int = 0, limit: int = 100) -> Any:
     leads = crud.lead.get_multi(db, skip=skip, limit=limit)
     return leads
+
+@router.patch("/{lead_id}", response_model=schemas.LeadOut)
+def update_lead_status(
+    *,
+    db: Session = Depends(deps.get_db),
+    lead_id: int,
+    lead_in: schemas.LeadUpdate,
+):
+    """
+    Обновить статус лида.
+    """
+    lead = crud.lead.get(db=db, id=lead_id)
+    if not lead:
+        raise HTTPException(status_code=404, detail="Lead not found")
+    lead = crud.lead.update(db=db, db_obj=lead, obj_in=lead_in)
+    return lead
