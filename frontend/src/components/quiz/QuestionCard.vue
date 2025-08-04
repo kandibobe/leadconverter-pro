@@ -8,9 +8,13 @@ defineProps({
 
 const quizStore = useQuizStore();
 
-// Обработчик для слайдера
-function handleSliderChange(event) {
+// Обработчики для слайдера
+function handleSliderInput(event) {
   quizStore.setArea(parseInt(event.target.value));
+}
+
+function handleSliderChange() {
+  quizStore.nextQuestion();
 }
 </script>
 
@@ -38,7 +42,8 @@ function handleSliderChange(event) {
         min="20"
         max="200"
         :value="quizStore.area"
-        @input="handleSliderChange"
+        @input="handleSliderInput"
+        @change="handleSliderChange"
         class="slider"
       />
       <div class="slider-value">{{ quizStore.area }} м²</div>
