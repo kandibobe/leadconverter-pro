@@ -15,4 +15,5 @@ class NotificationService:
             print(f"  - {key}: {value}")
         print("="*50)
 
+
 notification = NotificationService()
