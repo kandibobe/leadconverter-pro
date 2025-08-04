@@ -17,6 +17,7 @@ const isSelected = computed(() => {
 function select() {
   // Вызываем action из store, чтобы обновить состояние
   quizStore.selectOption(props.questionId, props.option.id);
+  quizStore.nextQuestion();
 }
 </script>
 
