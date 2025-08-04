@@ -15,4 +15,4 @@ python-jose[cryptography]==3.3.0
 email-validator==2.1.1
 
 # --- PDF Generation (НОВОЕ) ---
-weasyprint==62.5
+weasyprint==66.0
