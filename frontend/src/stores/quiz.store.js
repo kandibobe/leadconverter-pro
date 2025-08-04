@@ -1,7 +1,43 @@
+ codex/improve-error-handling-and-add-i18n-support
+ codex/improve-error-handling-and-add-i18n-support
+// @ts-check
+import { defineStore } from 'pinia';
+import quizService from '../services/quiz.service.js';
+import leadService from '../services/lead.service.js';
+/** @typedef {import('../types.js').Quiz} Quiz */
+/** @typedef {import('../types.js').LeadData} LeadData */
+
+const getInitialState = () => ({
+  /** @type {Quiz|null} */
+  quizData: null,
+  isLoading: false,
+  /** @type {string|null} */
+  error: null,
+  selectedOptions: {},
+  area: 50,
+  isLeadModalVisible: false,
+  isSubmittingLead: false,
+  /** @type {string|null} */
+  leadSubmissionError: null,
+  isLeadSubmittedSuccessfully: false,
+
+// /frontend/src/stores/quiz.store.js
+
+
+ main
 import { defineStore } from 'pinia';
 import quizService from '../services/quiz.service.js';
 import leadService from '../services/lead.service.js';
 
+ codex/improve-error-handling-and-add-i18n-support
+// Настраиваем базовый URL для нашего API
+const apiClient = axios.create({
+  baseURL: 'http://localhost:8000/api/v1', // URL нашего бэкенда
+  headers: {
+    'Content-Type': 'application/json',
+  },
+ main
+=======
 const getInitialState = () => ({
   quizData: null,
   isLoading: false,
@@ -12,6 +48,7 @@ const getInitialState = () => ({
   isSubmittingLead: false,
   leadSubmissionError: null,
   isLeadSubmittedSuccessfully: false,
+ main
 });
 
 export const useQuizStore = defineStore('quiz', {
@@ -59,8 +96,22 @@ export const useQuizStore = defineStore('quiz', {
         const response = await quizService.getQuizById(id);
         this.quizData = response.data;
       } catch (err) {
+ codex/improve-error-handling-and-add-i18n-support
+ codex/improve-error-handling-and-add-i18n-support
+
+        this.error = 'Не удалось загрузить квиз. Попробуйте позже.';
+ main
+
         this.error = 'Не удалось загрузить квиз.';
+ main
         console.error(err);
+        if (!err.response) {
+          this.error = 'NETWORK';
+        } else if (err.response.status === 404) {
+          this.error = 'NOT_FOUND';
+        } else {
+          this.error = 'UNKNOWN';
+        }
       } finally {
         this.isLoading = false;
       }
@@ -68,6 +119,9 @@ export const useQuizStore = defineStore('quiz', {
     selectOption(questionId, optionId) {
       this.selectedOptions[questionId] = optionId;
     },
+ codex/improve-error-handling-and-add-i18n-support
+ codex/improve-error-handling-and-add-i18n-support
+
     setArea(newArea) {
       this.area = newArea;
     },
@@ -80,6 +134,7 @@ export const useQuizStore = defineStore('quiz', {
     closeLeadModal() {
       this.isLeadModalVisible = false;
     },
+ main
     async submitLead(email) {
       this.isSubmittingLead = true;
       this.leadSubmissionError = null;
@@ -89,11 +144,41 @@ export const useQuizStore = defineStore('quiz', {
         this.closeLeadModal();
         this.isLeadSubmittedSuccessfully = true;
       } catch (error) {
+ codex/improve-error-handling-and-add-i18n-support
+        console.error('Lead submission failed:', error);
+        this.leadSubmissionError = error.response ? 'SUBMIT' : 'NETWORK';
+      } finally {
+        this.isSubmittingLead = false;
+      }
+
+
+    async submitLead(clientEmail) {
+        this.isLoading = true;
+        this.error = null;
+        const leadData = {
+            quiz_id: this.quiz.id,
+            client_email: clientEmail,
+            answers: this.answers,
+        };
+
+        try {
+            const response = await apiClient.post('/leads', leadData);
+            this.finalLead = response.data;
+            console.log('Лид успешно создан:', this.finalLead);
+        } catch (err) {
+            this.error = 'Произошла ошибка при отправке данных.';
+            console.error(err);
+        } finally {
+            this.isLoading = false;
+        }
+ main
+
         console.error("Lead submission failed:", error);
         this.leadSubmissionError = "Произошла ошибка. Пожалуйста, проверьте email и попробуйте снова.";
       } finally {
         this.isSubmittingLead = false;
       }
+ main
     },
   },
 });
