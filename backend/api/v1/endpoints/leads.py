@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from typing import List, Any
 
@@ -8,7 +8,8 @@ from app.services import pdf_generator # Импортируем наш новы�
 
 router = APIRouter()
 
-@router.post("/submit", response_model=schemas.lead.LeadOut)
+
+@router.post("", response_model=schemas.lead.LeadOut)
 def submit_lead(
     *,
     db: Session = Depends(deps.get_db),
@@ -35,7 +36,7 @@ def submit_lead(
     return lead_out_data
 
 
-@router.get("/", response_model=List[schemas.lead.LeadOut])
+@router.get("", response_model=List[schemas.lead.LeadOut])
 def read_leads(
     db: Session = Depends(deps.get_db),
     skip: int = 0,
