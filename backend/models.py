@@ -13,7 +13,7 @@ class Question(Base):
     __tablename__ = "questions"
     id = Column(Integer, primary_key=True, index=True)
     text = Column(String)
-    question_type = Column(String, default="radio") # radio, checkbox, slider
+    question_type = Column(String, default="single-choice")  # single-choice, slider
     quiz_id = Column(Integer, ForeignKey("quizzes.id"))
     quiz = relationship("Quiz", back_populates="questions")
     options = relationship("Option", back_populates="question")
@@ -31,4 +31,8 @@ class Lead(Base):
     id = Column(Integer, primary_key=True, index=True)
     client_email = Column(String, index=True)
     estimated_cost = Column(Float)
+codex/check-models-for-single-choice-usage
+    details = Column(JSON)  # Здесь будем хранить все ответы квиза
+
     details = Column(JSON) # Здесь будем хранить все ответы квиза
+main

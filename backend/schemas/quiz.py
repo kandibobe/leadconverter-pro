@@ -1,5 +1,13 @@
-from pydantic import BaseModel, Field
+from enum import Enum
 from typing import List, Optional
+
+from pydantic import BaseModel, Field
+
+# --- Допустимые типы вопросов ---
+class QuestionType(str, Enum):
+    """Enumeration of supported quiz question types."""
+    SINGLE_CHOICE = "single-choice"  # user selects one option
+    SLIDER = "slider"  # numeric slider input
 
 # --- Схемы для Вариантов Ответов (Option) ---
 class OptionBase(BaseModel):
@@ -20,7 +28,7 @@ class Option(OptionBase):
 class QuestionBase(BaseModel):
     text: str
     description: Optional[str] = None
-    question_type: str
+    question_type: QuestionType
     order: int
 
 class QuestionCreate(QuestionBase):
@@ -32,6 +40,7 @@ class Question(QuestionBase):
 
     class Config:
         from_attributes = True
+
 
 # --- Схемы для Квиза (Quiz) ---
 class QuizBase(BaseModel):
@@ -48,3 +57,4 @@ class Quiz(QuizBase):
 
     class Config:
         from_attributes = True
+
