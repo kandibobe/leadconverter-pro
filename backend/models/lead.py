@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Float, JSON, DateTime, func
-from .database import Base
+from app.db.base import Base
 
 class Lead(Base):
     __tablename__ = "leads"
@@ -11,5 +11,5 @@ class Lead(Base):
     
     # Используем JSON для гибкого хранения расшифровки ответов
     answers_details = Column(JSON, nullable=False)
-    
+
     created_at = Column(DateTime(timezone=True), server_default=func.now())
