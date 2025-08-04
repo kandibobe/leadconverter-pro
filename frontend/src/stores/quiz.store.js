@@ -8,6 +8,7 @@ const getInitialState = () => ({
   error: null,
   selectedOptions: {},
   area: 50,
+  currentQuestionIndex: 0,
   isLeadModalVisible: false,
   isSubmittingLead: false,
   leadSubmissionError: null,
@@ -17,6 +18,10 @@ const getInitialState = () => ({
 export const useQuizStore = defineStore('quiz', {
   state: getInitialState,
   getters: {
+    currentQuestion: (state) => {
+      if (!state.quizData) return null;
+      return state.quizData.questions[state.currentQuestionIndex] || null;
+    },
     totalPrice: (state) => {
       if (!state.quizData) return 0;
       const basePricePerMeter = Object.values(state.selectedOptions).reduce((total, optionId) => {
@@ -64,6 +69,7 @@ export const useQuizStore = defineStore('quiz', {
       try {
         const response = await quizService.getQuizById(id);
         this.quizData = response.data;
+        this.currentQuestionIndex = 0;
       } catch (err) {
         this.error = 'Не удалось загрузить квиз.';
         console.error(err);
@@ -76,6 +82,11 @@ export const useQuizStore = defineStore('quiz', {
     },
     setArea(newArea) {
       this.area = newArea;
+    },
+    nextQuestion() {
+      if (this.quizData && this.currentQuestionIndex < this.quizData.questions.length) {
+        this.currentQuestionIndex += 1;
+      }
     },
     reset() {
       Object.assign(this, getInitialState());
