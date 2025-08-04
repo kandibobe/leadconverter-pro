@@ -5,7 +5,8 @@ from alembic import context
 # Теперь, когда entrypoint.sh устанавливает PYTHONPATH,
 # эти импорты будут работать без каких-либо манипуляций с sys.path
 from db.base import Base
-from db.models import quiz, lead, settings
+from app.models import quiz, lead
+from app.core.config import settings
 
 config = context.config
 
