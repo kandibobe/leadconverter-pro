@@ -39,25 +39,21 @@ export const useQuizStore = defineStore('quiz', {
       const answers = [];
       if (state.quizData) {
         state.quizData.questions.forEach(q => {
-          if (q.question_type === 'slider') {
-            answers.push({
-              question_id: q.id,
-              value: state.area,
-            });
-          } else {
-            const optionId = state.selectedOptions[q.id];
-            if (optionId) {
-              answers.push({
-                question_id: q.id,
-                option_id: optionId,
-              });
-            }
-          }
+
+          const optionId = state.selectedOptions[q.id] ?? null;
+          answers.push({
+            question_id: q.id,
+            option_id: optionId,
+            value: q.question_type === 'slider' ? state.area : null,
+          });
+
         });
       }
       return {
         quiz_id: state.quizData ? state.quizData.id : null,
-        client_email: '',
+
+        client_email: null,
+
         answers,
       };
     },
