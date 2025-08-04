@@ -60,4 +60,11 @@ npm run dev
 
 ### Testing
 
-This repository does not include automated tests. Linting and formatting scripts are available in the frontend `package.json`.
+Automated tests for the backend live in `backend/tests` and are executed with `pytest`.
+After installing the backend requirements, run:
+
+```bash
+cd backend
+pytest
+```
+
