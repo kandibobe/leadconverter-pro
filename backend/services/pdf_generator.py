@@ -16,7 +16,7 @@ def generate_lead_pdf(lead_data: LeadOut) -> str:
     <!DOCTYPE html>
     <html lang="ru">
     <head>
-        <meta charset="UTF-axl">
+        <meta charset="UTF-8">
         <title>Смета по вашему проекту</title>
         <style>
             body {{ font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333; }}
