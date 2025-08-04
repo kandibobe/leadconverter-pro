@@ -31,23 +31,21 @@ export const useQuizStore = defineStore('quiz', {
       return basePricePerMeter * state.area;
     },
     leadPayload: (state) => {
-      const answers_data = {};
+      const answers = [];
       if (state.quizData) {
         state.quizData.questions.forEach(q => {
-          if (q.question_type === 'slider') {
-            answers_data[q.text] = `${state.area} м²`;
-          } else {
-            const optionId = state.selectedOptions[q.id];
-            if (optionId) {
-              const option = q.options.find(o => o.id === optionId);
-              answers_data[q.text] = option ? option.text : 'Не выбрано';
-            }
-          }
+          const optionId = state.selectedOptions[q.id] ?? null;
+          answers.push({
+            question_id: q.id,
+            option_id: optionId,
+            value: q.question_type === 'slider' ? state.area : null,
+          });
         });
       }
       return {
-        final_price: state.totalPrice,
-        answers_data,
+        quiz_id: state.quizData ? state.quizData.id : null,
+        client_email: null,
+        answers,
       };
     },
   },
@@ -84,7 +82,7 @@ export const useQuizStore = defineStore('quiz', {
       this.isSubmittingLead = true;
       this.leadSubmissionError = null;
       try {
-        const payload = { ...this.leadPayload, email };
+        const payload = { ...this.leadPayload, client_email: email };
         await leadService.create(payload);
         this.closeLeadModal();
         this.isLeadSubmittedSuccessfully = true;
