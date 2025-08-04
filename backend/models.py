@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Float, ForeignKey, JSON
 from sqlalchemy.orm import relationship
-from .database import Base
+from app.db.base import Base
 
 class Quiz(Base):
     __tablename__ = "quizzes"
@@ -31,5 +31,8 @@ class Lead(Base):
     id = Column(Integer, primary_key=True, index=True)
     client_email = Column(String, index=True)
     estimated_cost = Column(Float)
+codex/check-models-for-single-choice-usage
     details = Column(JSON)  # Здесь будем хранить все ответы квиза
 
+    details = Column(JSON) # Здесь будем хранить все ответы квиза
+main

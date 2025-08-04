@@ -1,3 +1,4 @@
+codex/check-models-for-single-choice-usage
 """Public exports for schema objects."""
 
 from .quiz import (
@@ -23,3 +24,8 @@ __all__ = [
     "LeadCreate",
 ]
 
+
+from .quiz import Quiz, QuizCreate, Question, QuestionCreate, Option, OptionCreate
+from .lead import Lead, LeadCreate
+from .dashboard import DashboardMetrics
+main
