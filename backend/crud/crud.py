@@ -1,7 +1,9 @@
 from sqlalchemy.orm import Session
+
 from app import schemas
 from app.models.lead import Lead
 from app.models.quiz import Quiz, Option
+
 
 def get_quiz(db: Session, quiz_id: int):
     """Получение квиза со всеми вопросами и вариантами ответов."""
