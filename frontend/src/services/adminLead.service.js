@@ -2,7 +2,7 @@ import apiClient from './apiClient.js'
 
 class AdminLeadService {
   getLeads() {
-    return apiClient.get('/api/v1/leads/')
+    return apiClient.get('/api/v1/leads')
   }
 }
 
