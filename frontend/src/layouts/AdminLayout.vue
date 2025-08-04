@@ -4,7 +4,14 @@
     <aside class="sidebar">
       <h2 class="sidebar-title">LeadConverter</h2>
       <nav>
-        <router-link to="/admin/dashboard" class="nav-link">Дашборд</router-link>
+        <router-link
+          to="/admin"
+          class="nav-link"
+          active-class=""
+          exact-active-class="router-link-active"
+        >
+          Дашборд
+        </router-link>
         <router-link to="/admin/leads" class="nav-link">Лиды</router-link>
       </nav>
       <button @click="logout" class="logout-button">Выйти</button>
