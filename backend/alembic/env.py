@@ -5,7 +5,7 @@ from alembic import context
 # Теперь, когда entrypoint.sh устанавливает PYTHONPATH,
 # эти импорты будут работать без каких-либо манипуляций с sys.path
 from db.base import Base
-from db.models import quiz, lead, settings
+from db.models import quiz, lead, settings  # noqa: F401
 
 config = context.config
 
@@ -13,6 +13,7 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 target_metadata = Base.metadata
+
 
 def run_migrations_online() -> None:
     connectable = engine_from_config(
@@ -24,5 +25,6 @@ def run_migrations_online() -> None:
         context.configure(connection=connection, target_metadata=target_metadata)
         with context.begin_transaction():
             context.run_migrations()
+
 
 run_migrations_online()

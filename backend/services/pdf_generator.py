@@ -6,6 +6,7 @@ from app.schemas.lead import LeadOut
 PDF_STORAGE_PATH = "generated_pdfs"
 os.makedirs(PDF_STORAGE_PATH, exist_ok=True)
 
+
 def generate_lead_pdf(lead_data: LeadOut) -> str:
     """
     Генерирует PDF-смету на основе данных лида и сохраняет ее.
@@ -48,7 +49,7 @@ def generate_lead_pdf(lead_data: LeadOut) -> str:
                     </thead>
                     <tbody>
     """
-    
+
     for question, answer in lead_data.answers_details.items():
         html_content += f"<tr><td>{question}</td><td>{answer}</td></tr>"
 
@@ -67,10 +68,10 @@ def generate_lead_pdf(lead_data: LeadOut) -> str:
     # Генерируем PDF
     pdf_filename = f"lead_{lead_data.id}_estimate.pdf"
     pdf_filepath = os.path.join(PDF_STORAGE_PATH, pdf_filename)
-    
+
     HTML(string=html_content).write_pdf(pdf_filepath)
-    
+
     print(f"PDF сгенерирован и сохранен: {pdf_filepath}")
-    
+
     # В реальном приложении здесь может быть URL для скачивания
     return pdf_filepath

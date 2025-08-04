@@ -4,12 +4,16 @@ from sqlalchemy.orm import relationship
 # Импорт Base теперь абсолютно безопасен, так как base.py больше ничего не импортирует.
 from app.db.base import Base
 
+
 class Quiz(Base):
     __tablename__ = "quizzes"
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, index=True, nullable=False)
     description = Column(Text, nullable=True)
-    questions = relationship("Question", back_populates="quiz", cascade="all, delete-orphan")
+    questions = relationship(
+        "Question", back_populates="quiz", cascade="all, delete-orphan"
+    )
+
 
 class Question(Base):
     __tablename__ = "questions"
@@ -20,7 +24,10 @@ class Question(Base):
     order = Column(Integer, nullable=False)
     quiz_id = Column(Integer, ForeignKey("quizzes.id"))
     quiz = relationship("Quiz", back_populates="questions")
-    options = relationship("Option", back_populates="question", cascade="all, delete-orphan")
+    options = relationship(
+        "Option", back_populates="question", cascade="all, delete-orphan"
+    )
+
 
 class Option(Base):
     __tablename__ = "options"

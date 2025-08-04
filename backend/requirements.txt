@@ -16,3 +16,8 @@ email-validator==2.1.1
 
 # --- PDF Generation (НОВОЕ) ---
 weasyprint==66.0
+
+# --- Development ---
+black==25.1.0
+ruff==0.12.7
+

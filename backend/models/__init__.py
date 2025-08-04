@@ -1,2 +1,4 @@
-from .quiz import Quiz, Question, Option
-from .lead import Lead
+from .quiz import Quiz as Quiz, Question as Question, Option as Option
+from .lead import Lead as Lead
+
+__all__ = ["Quiz", "Question", "Option", "Lead"]

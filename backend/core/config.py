@@ -4,6 +4,7 @@ from string import Template
 
 # Загружаем переменные из .env файла, если он есть
 from dotenv import load_dotenv
+
 load_dotenv()
 
 # Expand DATABASE_URL if it contains placeholders like ${POSTGRES_USER}
@@ -17,11 +18,13 @@ if "${" in raw_db_url:
     )
     os.environ["DATABASE_URL"] = raw_db_url
 
+
 class Settings(BaseSettings):
     """
     Класс для хранения всех настроек приложения.
     Настройки загружаются из переменных окружения.
     """
+
     PROJECT_NAME: str = "LeadConverter Pro"
     API_V1_STR: str = "/api/v1"
 
@@ -29,7 +32,11 @@ class Settings(BaseSettings):
     DATABASE_URL: str = os.getenv("DATABASE_URL", "")
 
     # CORS settings
-    BACKEND_CORS_ORIGINS: list[str] = [origin.strip() for origin in os.getenv("BACKEND_CORS_ORIGINS", "*").split(",") if origin]
+    BACKEND_CORS_ORIGINS: list[str] = [
+        origin.strip()
+        for origin in os.getenv("BACKEND_CORS_ORIGINS", "*").split(",")
+        if origin
+    ]
 
     # Настройки безопасности
     SECRET_KEY: str
@@ -38,5 +45,6 @@ class Settings(BaseSettings):
 
     class Config:
         case_sensitive = True
+
 
 settings = Settings()

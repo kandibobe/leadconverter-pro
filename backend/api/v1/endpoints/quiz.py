@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from typing import List
 
 from app import crud, schemas
 from app.database import get_db
 
 router = APIRouter()
+
 
 @router.get("/quizzes/{quiz_id}", response_model=schemas.Quiz)
 def read_quiz(quiz_id: int, db: Session = Depends(get_db)):
@@ -17,6 +17,7 @@ def read_quiz(quiz_id: int, db: Session = Depends(get_db)):
     if db_quiz is None:
         raise HTTPException(status_code=404, detail="Quiz not found")
     return db_quiz
+
 
 @router.post("/leads", response_model=schemas.Lead)
 def submit_lead(lead: schemas.LeadCreate, db: Session = Depends(get_db)):

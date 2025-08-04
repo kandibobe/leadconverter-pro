@@ -3,8 +3,11 @@ from app.models import lead as lead_model
 from app.models import quiz as quiz_model
 from app.schemas import lead as lead_schema
 
+
 class CRUDLead:
-    def create_with_calculation(self, db: Session, *, obj_in: lead_schema.LeadCreateIn) -> lead_model.Lead:
+    def create_with_calculation(
+        self, db: Session, *, obj_in: lead_schema.LeadCreateIn
+    ) -> lead_model.Lead:
         """
         Создает лид, производя расчеты на основе ответов.
         Это - сердце бизнес-логики.
@@ -14,18 +17,28 @@ class CRUDLead:
         answers_details = {}
 
         # 1. Получаем все опции, которые выбрал пользователь, одним запросом
-        chosen_option_ids = [answer.option_id for answer in obj_in.answers if answer.option_id]
-        chosen_options = db.query(quiz_model.Option).filter(quiz_model.Option.id.in_(chosen_option_ids)).all()
+        chosen_option_ids = [
+            answer.option_id for answer in obj_in.answers if answer.option_id
+        ]
+        chosen_options = (
+            db.query(quiz_model.Option)
+            .filter(quiz_model.Option.id.in_(chosen_option_ids))
+            .all()
+        )
         options_map = {option.id: option for option in chosen_options}
 
         # 2. Обрабатываем ответы
         for answer in obj_in.answers:
-            question = db.query(quiz_model.Question).filter(quiz_model.Question.id == answer.question_id).first()
+            question = (
+                db.query(quiz_model.Question)
+                .filter(quiz_model.Question.id == answer.question_id)
+                .first()
+            )
             if not question:
                 continue
 
             # Если это вопрос типа "слайдер" (площадь)
-            if question.question_type == 'slider':
+            if question.question_type == "slider":
                 try:
                     area_multiplier = float(answer.value)
                     answers_details[question.text] = f"{area_multiplier} м²"
@@ -36,7 +49,7 @@ class CRUDLead:
                 option = options_map[answer.option_id]
                 base_price += option.value
                 answers_details[question.text] = option.text
-        
+
         # 3. Рассчитываем итоговую стоимость
         final_price = base_price * area_multiplier
 
@@ -45,7 +58,7 @@ class CRUDLead:
             quiz_id=obj_in.quiz_id,
             client_email=obj_in.client_email,
             final_price=final_price,
-            answers_details=answers_details
+            answers_details=answers_details,
         )
 
         db_obj = lead_model.Lead(**lead_create_data.model_dump())
@@ -54,7 +67,9 @@ class CRUDLead:
         db.refresh(db_obj)
         return db_obj
 
-    def get_multi(self, db: Session, *, skip: int = 0, limit: int = 100) -> list[lead_model.Lead]:
+    def get_multi(
+        self, db: Session, *, skip: int = 0, limit: int = 100
+    ) -> list[lead_model.Lead]:
         return db.query(lead_model.Lead).offset(skip).limit(limit).all()
 
 

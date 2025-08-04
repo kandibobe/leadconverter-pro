@@ -1,7 +1,8 @@
 from pydantic import BaseModel, EmailStr
-from typing import List, Optional, Dict, Any
+from typing import List, Dict, Any
 
 # --- Схемы для отображения квиза ---
+
 
 class Option(BaseModel):
     id: int
@@ -9,6 +10,7 @@ class Option(BaseModel):
 
     class Config:
         orm_mode = True
+
 
 class Question(BaseModel):
     id: int
@@ -19,6 +21,7 @@ class Question(BaseModel):
     class Config:
         orm_mode = True
 
+
 class Quiz(BaseModel):
     id: int
     name: str
@@ -28,16 +31,20 @@ class Quiz(BaseModel):
     class Config:
         orm_mode = True
 
+
 # --- Схемы для создания лида ---
+
 
 class LeadAnswer(BaseModel):
     question_id: int
     option_id: int
 
+
 class LeadCreate(BaseModel):
     quiz_id: int
     client_email: EmailStr
     answers: List[LeadAnswer]
+
 
 class Lead(BaseModel):
     id: int

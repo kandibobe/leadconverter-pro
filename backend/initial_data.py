@@ -3,6 +3,7 @@
 from app.database import SessionLocal
 from app.models import Quiz, Question, Option
 
+
 def seed_data():
     db = SessionLocal()
     try:
@@ -13,7 +14,7 @@ def seed_data():
             # --- Создаем Квиз "Ремонт квартир" ---
             quiz = Quiz(
                 name="Калькулятор ремонта квартиры",
-                description="Ответьте на несколько вопросов и получите предварительную смету на ремонт вашей мечты."
+                description="Ответьте на несколько вопросов и получите предварительную смету на ремонт вашей мечты.",
             )
             db.add(quiz)
             db.commit()
@@ -25,16 +26,22 @@ def seed_data():
             db.commit()
             db.refresh(q1)
             o1_1 = Option(text="Новостройка", value=5000, question_id=q1.id)
-            o1_2 = Option(text="Вторичное жилье", value=15000, question_id=q1.id) # Демонтаж дороже
+            o1_2 = Option(
+                text="Вторичное жилье", value=15000, question_id=q1.id
+            )  # Демонтаж дороже
             db.add_all([o1_1, o1_2])
 
             # --- Вопрос 2: Площадь ---
-            q2 = Question(text="Укажите площадь помещения (м²)?", question_type="slider", quiz_id=quiz.id)
+            q2 = Question(
+                text="Укажите площадь помещения (м²)?",
+                question_type="slider",
+                quiz_id=quiz.id,
+            )
             db.add(q2)
             db.commit()
             db.refresh(q2)
             # Для слайдера можно задать цену за единицу (например, за м²)
-            o2_1 = Option(text="Площадь", value=3000, question_id=q2.id) # 3000 за м²
+            o2_1 = Option(text="Площадь", value=3000, question_id=q2.id)  # 3000 за м²
             db.add(o2_1)
 
             # --- Вопрос 3: Тип ремонта ---
@@ -54,6 +61,7 @@ def seed_data():
 
     finally:
         db.close()
+
 
 if __name__ == "__main__":
     seed_data()

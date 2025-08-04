@@ -9,11 +9,12 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI(
     title="LeadConverter Pro API",
     description="API для интерактивного квиз-калькулятора.",
-    version="1.0.0"
+    version="1.0.0",
 )
 
 # Подключаем роутеры
 app.include_router(quiz.router, prefix="/api/v1", tags=["Quiz & Leads"])
+
 
 @app.get("/")
 def read_root():
