@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from . import models, schemas
+from app import models, schemas
 
 def get_quiz(db: Session, quiz_id: int):
     """Получение квиза со всеми вопросами и вариантами ответов."""
