@@ -10,6 +10,11 @@ const quizStore = useQuizStore()
 
 function handleSliderChange(e) {
   quizStore.setArea(parseInt(e.target.value))
+
+}
+
+function handleSliderChange() {
+  quizStore.nextQuestion();
 }
 </script>
 
@@ -33,7 +38,9 @@ function handleSliderChange(e) {
         min="20"
         max="200"
         :value="quizStore.area"
+
         @input="handleSliderChange"
+
       />
       <div>{{ quizStore.area }} м²</div>
     </div>
