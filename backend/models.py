@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Float, ForeignKey, JSON
 from sqlalchemy.orm import relationship
-from .database import Base
+from app.db.base import Base
 
 class Quiz(Base):
     __tablename__ = "quizzes"

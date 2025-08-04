@@ -8,6 +8,7 @@ const getInitialState = () => ({
   error: null,
   selectedOptions: {},
   area: 50,
+  currentQuestionIndex: 0,
   isLeadModalVisible: false,
   isSubmittingLead: false,
   leadSubmissionError: null,
@@ -17,6 +18,10 @@ const getInitialState = () => ({
 export const useQuizStore = defineStore('quiz', {
   state: getInitialState,
   getters: {
+    currentQuestion: (state) => {
+      if (!state.quizData) return null;
+      return state.quizData.questions[state.currentQuestionIndex] || null;
+    },
     totalPrice: (state) => {
       if (!state.quizData) return 0;
       const basePricePerMeter = Object.values(state.selectedOptions).reduce((total, optionId) => {
@@ -34,17 +39,21 @@ export const useQuizStore = defineStore('quiz', {
       const answers = [];
       if (state.quizData) {
         state.quizData.questions.forEach(q => {
+
           const optionId = state.selectedOptions[q.id] ?? null;
           answers.push({
             question_id: q.id,
             option_id: optionId,
             value: q.question_type === 'slider' ? state.area : null,
           });
+
         });
       }
       return {
         quiz_id: state.quizData ? state.quizData.id : null,
+
         client_email: null,
+
         answers,
       };
     },
@@ -56,6 +65,7 @@ export const useQuizStore = defineStore('quiz', {
       try {
         const response = await quizService.getQuizById(id);
         this.quizData = response.data;
+        this.currentQuestionIndex = 0;
       } catch (err) {
         this.error = 'Не удалось загрузить квиз.';
         console.error(err);
@@ -68,6 +78,11 @@ export const useQuizStore = defineStore('quiz', {
     },
     setArea(newArea) {
       this.area = newArea;
+    },
+    nextQuestion() {
+      if (this.quizData && this.currentQuestionIndex < this.quizData.questions.length) {
+        this.currentQuestionIndex += 1;
+      }
     },
     reset() {
       Object.assign(this, getInitialState());
