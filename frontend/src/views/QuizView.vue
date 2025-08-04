@@ -27,7 +27,7 @@ function handleLeadSubmitted() {
 
 <template>
   <div class="quiz-container">
-    <PriceDisplay v-if="quizStore.quiz" />
+    <PriceDisplay v-if="quizStore.quizData" />
     <div v-if="quizStore.isLoading">
       <Spinner />
     </div>
@@ -36,9 +36,9 @@ function handleLeadSubmitted() {
       <p class="error-message">Ошибка загрузки квиза: {{ quizStore.error }}</p>
     </div>
 
-    <div v-else-if="quizStore.quiz">
-      <h1>{{ quizStore.quiz.name }}</h1>
-      <p>{{ quizStore.quiz.description }}</p>
+    <div v-else-if="quizStore.quizData">
+      <h1>{{ quizStore.quizData.name }}</h1>
+      <p>{{ quizStore.quizData.description }}</p>
 
       <QuestionCard
         v-if="quizStore.currentQuestion"
