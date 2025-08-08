@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from app.models import lead as lead_model
-from app.models import quiz as quiz_model
+import app.models.lead as lead_model
+import app.models.quiz as quiz_model
 from app.schemas import lead as lead_schema
 
 class CRUDLead:
