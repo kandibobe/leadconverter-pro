@@ -8,6 +8,7 @@ from app.services import pdf_generator  # Импортируем наш новы
 
 router = APIRouter()
 
+
 @router.post("/submit", response_model=schemas.lead.LeadOut)
 def submit_lead(
     *,
@@ -23,6 +24,19 @@ def submit_lead(
     created_lead = crud.lead.create_with_calculation(
         db=db, obj_in=lead_in, tenant_id=tenant_id
     )
+   crud.lead_event.create(
+        db=db,
+        obj_in=schemas.LeadEventCreate(
+            lead_id=created_lead.id,
+            event_type="created",
+            payload={
+                "final_price": created_lead.final_price,
+                "answers_details": created_lead.answers_details,
+            },
+        ),
+        tenant_id=tenant_id,
+    )
+
 
     # 2. Преобразуем созданный объект в Pydantic-схему для ответа
     lead_out_data = schemas.lead.LeadOut.model_validate(created_lead)
@@ -30,7 +44,7 @@ def submit_lead(
     # 3. Генерируем PDF и получаем путь к нему
     # В будущем здесь можно будет вернуть URL для скачивания
     pdf_path = pdf_generator.generate_lead_pdf(lead_out_data)
-    lead_out_data.pdf_url = pdf_path # Добавляем путь в ответ API
+    lead_out_data.pdf_url = pdf_path  # Добавляем путь в ответ API
 
     # 4. Здесь же можно будет добавить отправку уведомлений в Telegram/Email
     # notification_service.send_new_lead_notification(lead_out_data)
@@ -49,4 +63,19 @@ def read_leads(
     Получить список всех лидов для админ-панели.
     """
     leads = crud.lead.get_multi(db, tenant_id=tenant_id, skip=skip, limit=limit)
+
     return leads
+
+
+@router.get("/{lead_id}/events", response_model=List[schemas.LeadEventOut])
+def read_lead_events(
+    lead_id: int,
+    db: Session = Depends(deps.get_db),
+    tenant_id: str = Depends(deps.get_tenant_id),
+) -> Any:
+    """Получить историю событий для лида."""
+    events = crud.lead_event.get_multi_by_lead(
+        db=db, lead_id=lead_id, tenant_id=tenant_id
+    )
+    return events
+

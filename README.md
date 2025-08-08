@@ -10,6 +10,8 @@ orchestrated through Docker Compose.
 - Dockerized development environment
 - Log summarization script with optional OpenAI integration
 - Basic multi-tenant isolation using PostgreSQL row-level security
+- Lightweight event history for leads and quizzes stored as JSONB
+
 
 ## Installation
 ### Clone the repository
