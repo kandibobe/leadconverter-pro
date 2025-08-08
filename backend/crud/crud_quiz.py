@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session, selectinload
 from app.models.quiz import Quiz, Question, Option
-from app.schemas.quiz import QuizCreate
+from app.models.quiz_event import QuizEvent
+from app.schemas.quiz import QuizCreate, Quiz as QuizSchema
 
 class CRUDQuiz:
     def get(self, db: Session, id: int, tenant_id: str) -> Quiz | None:
@@ -50,6 +51,12 @@ class CRUDQuiz:
                 db_quiz.questions.append(db_question)
         
         db.add(db_quiz)
+        db.flush()
+
+        snapshot = QuizSchema.model_validate(db_quiz).model_dump()
+        db_event = QuizEvent(quiz_id=db_quiz.id, data=snapshot)
+        db.add(db_event)
+
         db.commit()
         db.refresh(db_quiz)
         return db_quiz

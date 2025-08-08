@@ -7,6 +7,7 @@ import QuizView from '@/views/QuizView.vue';
 import AdminLayout from '@/layouts/AdminLayout.vue';
 import DashboardView from '@/views/admin/DashboardView.vue';
 import LeadsView from '@/views/admin/LeadsView.vue'; // Добавим страницу лидов
+import HistoryView from '@/views/admin/HistoryView.vue';
 
 const routes = [
   // --- Клиентская часть ---
@@ -30,6 +31,11 @@ const routes = [
         path: 'leads', // Страница лидов по адресу /admin/leads
         name: 'AdminLeads',
         component: LeadsView
+      },
+      {
+        path: 'history',
+        name: 'History',
+        component: HistoryView
       }
     ]
   }

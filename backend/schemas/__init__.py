@@ -5,3 +5,4 @@ from .lead import (
     LeadCreateInternal,
     LeadOut,
 )
+from .history import LeadEvent, QuizEvent
