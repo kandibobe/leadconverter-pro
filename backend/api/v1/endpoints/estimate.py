@@ -4,8 +4,8 @@ from fastapi.concurrency import run_in_threadpool
 from sqlalchemy.orm import Session
 
 from app.api import deps
-from app.schemas.estimate import EstimateRequest, EstimateResponse
-from app.services.estimate_service import calculate_estimate
+from app.domain.estimate import EstimateRequest, EstimateResponse
+from app.application.services.estimate_service import calculate_estimate
 
 router = APIRouter()
 

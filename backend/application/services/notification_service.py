@@ -1,4 +1,4 @@
-from app.schemas.lead import LeadOut
+from app.domain.lead import LeadOut
 
 class NotificationService:
     def send_new_lead_notification(self, lead_data: LeadOut):

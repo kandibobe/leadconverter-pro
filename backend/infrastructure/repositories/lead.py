@@ -1,10 +1,12 @@
 from sqlalchemy.orm import Session
-from app.models import lead as lead_model
-from app.models import quiz as quiz_model
-from app.schemas import lead as lead_schema
+from app.infrastructure.models import lead as lead_model
+from app.infrastructure.models import quiz as quiz_model
+from app.domain import lead as lead_schema
 
 class CRUDLead:
-    def create_with_calculation(self, db: Session, *, obj_in: lead_schema.LeadCreateIn) -> lead_model.Lead:
+    def create_with_calculation(
+        self, db: Session, *, obj_in: lead_schema.LeadCreateIn, tenant_id: str
+    ) -> lead_model.Lead:
         """
         Создает лид, производя расчеты на основе ответов.
         Это - сердце бизнес-логики.
@@ -45,7 +47,8 @@ class CRUDLead:
             quiz_id=obj_in.quiz_id,
             client_email=obj_in.client_email,
             final_price=final_price,
-            answers_details=answers_details
+            answers_details=answers_details,
+            tenant_id=tenant_id,
         )
 
         db_obj = lead_model.Lead(**lead_create_data.model_dump())
@@ -54,8 +57,16 @@ class CRUDLead:
         db.refresh(db_obj)
         return db_obj
 
-    def get_multi(self, db: Session, *, skip: int = 0, limit: int = 100) -> list[lead_model.Lead]:
-        return db.query(lead_model.Lead).offset(skip).limit(limit).all()
+    def get_multi(
+        self, db: Session, *, tenant_id: str, skip: int = 0, limit: int = 100
+    ) -> list[lead_model.Lead]:
+        return (
+            db.query(lead_model.Lead)
+            .filter(lead_model.Lead.tenant_id == tenant_id)
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
 
 
 lead = CRUDLead()

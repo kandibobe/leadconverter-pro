@@ -6,6 +6,7 @@ from app.database import Base
 class Quiz(Base):
     __tablename__ = "quizzes"
     id = Column(Integer, primary_key=True, index=True)
+    tenant_id = Column(String, index=True, nullable=False)
     title = Column(String, index=True, nullable=False)
     description = Column(Text, nullable=True)
     questions = relationship("Question", back_populates="quiz", cascade="all, delete-orphan")

@@ -1,7 +1,7 @@
-# backend/app/schemas/estimate.py
+# backend/domain/estimate.py
 from pydantic import BaseModel
 from typing import List
-from app.schemas.lead import LeadAnswerIn
+from app.domain.lead import LeadAnswerIn
 
 class EstimateRequest(BaseModel):
     quiz_id: int
