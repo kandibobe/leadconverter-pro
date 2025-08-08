@@ -1,6 +1,7 @@
 import grpc
 from app.api.protos import lead_pb2, lead_pb2_grpc
 from app.schemas.lead import LeadOut
+from app.core.config import settings
 
 class LeadServiceClient:
     """Simple gRPC client for interacting with the LeadService."""
@@ -10,6 +11,25 @@ class LeadServiceClient:
 
     def _create_stub(self):
         channel = grpc.insecure_channel(self._target)
+        if not settings.GRPC_CA_PATH:
+            raise ValueError("GRPC_CA_PATH is not set")
+
+        with open(settings.GRPC_CA_PATH, "rb") as f:
+            root_cert = f.read()
+
+        private_key = certificate_chain = None
+        if settings.GRPC_KEY_PATH and settings.GRPC_CERT_PATH:
+            with open(settings.GRPC_KEY_PATH, "rb") as f:
+                private_key = f.read()
+            with open(settings.GRPC_CERT_PATH, "rb") as f:
+                certificate_chain = f.read()
+
+        credentials = grpc.ssl_channel_credentials(
+            root_certificates=root_cert,
+            private_key=private_key,
+            certificate_chain=certificate_chain,
+        )
+        channel = grpc.secure_channel(self._target, credentials)
         stub = lead_pb2_grpc.LeadServiceStub(channel)
         return stub, channel
 

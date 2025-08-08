@@ -1,7 +1,7 @@
 # backend/Dockerfile (ИСПРАВЛЕННАЯ ВЕРСИЯ)
 
 # --- Этап 1: Сборка зависимостей ---
-FROM python:3.11-slim as builder
+FROM python:3.11-slim AS builder
 
 WORKDIR /app
 
@@ -28,10 +28,14 @@ RUN pip install --no-cache /wheels/*
 
 # Копируем код нашего приложения, указывая путь от корня проекта
 COPY ./backend /app
-COPY backend/entrypoint.sh /app/entrypoint.sh
-RUN chmod +x /app/entrypoint.sh
+# Копируем точку входа отдельно и размещаем её вне тома проекта,
+# чтобы избежать проблем с правами и окончанием строк на Windows
+COPY backend/entrypoint.sh /entrypoint.sh
+# Обеспечиваем корректные окончания строк и права на выполнение
+RUN sed -i 's/\r$//' /entrypoint.sh \
+    && chmod +x /entrypoint.sh
 
 # Открываем порт
 EXPOSE 8000
 
-ENTRYPOINT ["./entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]

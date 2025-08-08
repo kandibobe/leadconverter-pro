@@ -2,7 +2,7 @@ from typing import Generator
 from fastapi import Header, Depends
 from sqlalchemy import text
 
-from app.database import SessionLocal
+from backend.database import SessionLocal
 
 def get_tenant_id(x_tenant_id: str = Header(...)) -> str:
     """Получить идентификатор арендатора из заголовка."""
@@ -13,9 +13,13 @@ def get_db(tenant_id: str = Depends(get_tenant_id)) -> Generator:
     """
     Зависимость, предоставляющая сессию базы данных и устанавливающая контекст арендатора.
     """
+    db = SessionLocal()  
     try:
-        db = SessionLocal()
+        # Устанавливаем идентификатор арендатора в контекст базы данных
         db.execute(text("SET app.tenant_id = :tenant_id"), {"tenant_id": tenant_id})
         yield db
+    except Exception:
+        db.rollback()
+        raise
     finally:
         db.close()
