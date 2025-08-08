@@ -4,9 +4,11 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 // Используем ТОЛЬКО надежные алиасы '@'
 import QuizView from '@/views/QuizView.vue';
+import CheckoutView from '@/views/CheckoutView.vue';
 import AdminLayout from '@/layouts/AdminLayout.vue';
 import DashboardView from '@/views/admin/DashboardView.vue';
 import LeadsView from '@/views/admin/LeadsView.vue'; // Добавим страницу лидов
+import BillingView from '@/views/admin/BillingView.vue';
 
 const routes = [
   // --- Клиентская часть ---
@@ -14,6 +16,11 @@ const routes = [
     path: '/',
     name: 'Quiz',
     component: QuizView
+  },
+  {
+    path: '/subscribe',
+    name: 'Checkout',
+    component: CheckoutView
   },
 
   // --- Админ-панель ---
@@ -30,6 +37,11 @@ const routes = [
         path: 'leads', // Страница лидов по адресу /admin/leads
         name: 'AdminLeads',
         component: LeadsView
+      },
+      {
+        path: 'billing',
+        name: 'AdminBilling',
+        component: BillingView
       }
     ]
   }
