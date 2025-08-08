@@ -5,6 +5,7 @@ class Lead(Base):
     __tablename__ = "leads"
 
     id = Column(Integer, primary_key=True, index=True)
+    tenant_id = Column(String, index=True, nullable=False)
     quiz_id = Column(Integer, nullable=False)
     client_email = Column(String, index=True, nullable=False)
     final_price = Column(Float, nullable=False)

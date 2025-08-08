@@ -4,7 +4,7 @@ from typing import List, Any
 
 from app import crud, schemas
 from app.api import deps
-from app.services import pdf_generator # Импортируем наш новый сервис
+from app.services import pdf_generator  # Импортируем наш новый сервис
 
 router = APIRouter()
 
@@ -12,6 +12,7 @@ router = APIRouter()
 def submit_lead(
     *,
     db: Session = Depends(deps.get_db),
+    tenant_id: str = Depends(deps.get_tenant_id),
     lead_in: schemas.lead.LeadCreateIn,
 ) -> Any:
     """
@@ -19,7 +20,9 @@ def submit_lead(
     Это основной эндпоинт для фронтенда.
     """
     # 1. Создаем лид с расчетом цены через CRUD
-    created_lead = crud.lead.create_with_calculation(db=db, obj_in=lead_in)
+    created_lead = crud.lead.create_with_calculation(
+        db=db, obj_in=lead_in, tenant_id=tenant_id
+    )
 
     # 2. Преобразуем созданный объект в Pydantic-схему для ответа
     lead_out_data = schemas.lead.LeadOut.model_validate(created_lead)
@@ -38,11 +41,12 @@ def submit_lead(
 @router.get("/", response_model=List[schemas.lead.LeadOut])
 def read_leads(
     db: Session = Depends(deps.get_db),
+    tenant_id: str = Depends(deps.get_tenant_id),
     skip: int = 0,
     limit: int = 100,
 ) -> Any:
     """
     Получить список всех лидов для админ-панели.
     """
-    leads = crud.lead.get_multi(db, skip=skip, limit=limit)
+    leads = crud.lead.get_multi(db, tenant_id=tenant_id, skip=skip, limit=limit)
     return leads
