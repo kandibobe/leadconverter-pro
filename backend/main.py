@@ -1,8 +1,8 @@
 from dotenv import load_dotenv
 from fastapi import FastAPI
 
-from app.api.v1.endpoints.api import api_router
-from app.api.v1.endpoints import log_summary
+from backend.api.v1.endpoints.api import api_router
+from backend.api.v1.endpoints import log_summary
 
 load_dotenv()
 

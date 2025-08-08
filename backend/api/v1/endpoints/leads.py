@@ -1,10 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from typing import List, Any
 
-from app import crud, schemas
-from app.api import deps
-from app.services import pdf_generator
+
+from backend import crud, schemas
+from backend.api import deps
+from backend.services import pdf_generator  # Импортируем наш новый сервис
+
 
 router = APIRouter()
 
@@ -37,7 +39,12 @@ def submit_lead(
 
     lead_out_data = schemas.lead.LeadOut.model_validate(created_lead)
     pdf_path = pdf_generator.generate_lead_pdf(lead_out_data)
-    lead_out_data.pdf_url = pdf_path
+
+    lead_out_data.pdf_url = pdf_path  # Добавляем путь в ответ API
+
+    # 4. Здесь же можно будет добавить отправку уведомлений в Telegram/Email
+    # notification_service.send_new_lead_notification(lead_out_data)
+
 
     return lead_out_data
 

@@ -2,8 +2,8 @@ import logging
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import Any
-from app import crud, schemas
-from app.api import deps
+from backend import crud, schemas
+from backend.api import deps
 
 # Настраиваем базовый логгер
 logging.basicConfig(level=logging.INFO)

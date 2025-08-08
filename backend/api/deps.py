@@ -16,7 +16,7 @@ def get_db(tenant_id: str = Depends(get_tenant_id)) -> Generator:
     db = SessionLocal()  
     try:
         # Устанавливаем идентификатор арендатора в контекст базы данных
-        db.execute(text("SET app.tenant_id = :tenant_id"), {"tenant_id": tenant_id})
+        db.execute(text("SET backend.tenant_id = :tenant_id"), {"tenant_id": tenant_id})
         yield db
     except Exception:
         db.rollback()

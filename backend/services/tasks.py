@@ -1,7 +1,7 @@
 """Tasks module that delegates work to gRPC services."""
 
-from app.schemas.lead import LeadOut
-from app.services.grpc_client import LeadServiceClient
+from backend.schemas.lead import LeadOut
+from backend.services.grpc_client import LeadServiceClient
 
 _client = LeadServiceClient()
 
