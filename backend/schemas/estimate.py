@@ -1,4 +1,4 @@
-# backend/app/schemas/estimate.py
+# app/schemas/estimate.py
 from pydantic import BaseModel
 from typing import List
 from app.schemas.lead import LeadAnswerIn

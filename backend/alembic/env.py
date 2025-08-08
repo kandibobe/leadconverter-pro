@@ -11,25 +11,10 @@ BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
 
-# Импортируем модуль app (где лежат config и SQLAlchemy Base)
-try:
-    import app as app_module  # type: ignore
-except ModuleNotFoundError:
-    app_module = types.ModuleType("app")
-    app_module.__path__ = [os.path.join(BASE_DIR, "app")]
-    sys.modules["app"] = app_module
+# Import application modules
+from app.core.config import settings  # noqa: E402
+from app.database import Base  # noqa: E402
 
-try:
-    from app.core.config import settings
-    from app.database import Base
-except ImportError as e:
-    print(f"Error importing modules: {e}")
-    print(
-        "Please ensure that the 'app' directory is correctly structured and that the necessary files exist, including __init__.py files."
-    )
-    raise
-
-# Alembic Config
 config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)

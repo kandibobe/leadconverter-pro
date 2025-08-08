@@ -1,5 +1,4 @@
-"""Wrapper around lead calculator to compute cost estimates."""
-import logging
+# app/services/estimate_service.py
 from sqlalchemy.orm import Session
 from app.schemas.estimate import EstimateRequest
 from app.services.lead_calculator import LeadCalculator

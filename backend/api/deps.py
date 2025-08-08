@@ -3,7 +3,7 @@ from fastapi import Header, Depends
 from sqlalchemy import text
 from app.services.lead_calculator import LeadCalculator
 
-from backend.database import SessionLocal
+from app.database import SessionLocal
 
 def get_tenant_id(x_tenant_id: str = Header(...)) -> str:
     """Получить идентификатор арендатора из заголовка."""

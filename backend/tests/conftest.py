@@ -7,12 +7,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
 sys.path.append(str(Path(__file__).resolve().parents[1]))
-import backend as app_module  # noqa: E402
-
-# Alias the backend package as 'app'
-sys.modules["app"] = app_module
-
-from backend.database import Base  # noqa: E402
+from app.database import Base  # noqa: E402
 
 
 # Stub models required for SQLAlchemy mapper configuration
@@ -65,7 +60,7 @@ def db_session():
 def client(db_session, tmp_path, monkeypatch):
     from fastapi.testclient import TestClient
     from app.api import deps
-    from backend.main import app
+    from app.main import app
 
     def get_test_db():
         try:
