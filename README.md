@@ -1,48 +1,50 @@
-8ars8g-codex/implement-log-summarizer-script
-# leadconverter-pro
+# LeadConverter Pro
+
+LeadConverter Pro is a full‑stack web application for managing lead conversion.
+It includes a FastAPI backend, a Vue 3 frontend and a PostgreSQL database, all
+orchestrated through Docker Compose.
+
+## Features
+- FastAPI backend with PostgreSQL storage
+- Vue 3 frontend powered by Vite
+- Dockerized development environment
+- Log summarization script with optional OpenAI integration
 
 ## Installation
-
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd leadconverter-pro
-   ```
-2. Copy the example environment file and adjust values if necessary:
-   ```bash
-   cp .env.example .env
-   ```
-3. Build the Docker images:
-   ```bash
-   docker-compose build
-   ```
-
-## Environment configuration
-
-The `.env` file controls the configuration for the database, backend and frontend services. The default values will start a local PostgreSQL instance and connect the applications to it. At minimum you should provide a strong `SECRET_KEY` for FastAPI:
-
+### Clone the repository
+```bash
+git clone <repository-url>
+cd leadconverter-pro
 ```
+
+### Configure environment variables
+Copy the example file and adjust the values to your needs. At minimum provide a
+strong `SECRET_KEY`.
+```bash
+cp .env.example .env
+```
+```env
 SECRET_KEY=your_super_secret_key_32_chars_long_replace_me
 ```
+Other variables include database credentials (`POSTGRES_USER`,
+`POSTGRES_PASSWORD`, `POSTGRES_DB`) and the frontend base URL
+(`VITE_API_BASE_URL`). See `.env.example` for all available options.
 
-Other variables include database credentials (`POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`) and the base URL used by the frontend (`VITE_API_BASE_URL`). See `.env.example` for all available options.
+### Build the Docker images
+```bash
+docker-compose build
+```
 
 ## Development
-
-The project is designed to run via Docker Compose which starts PostgreSQL, the FastAPI backend and the Vue frontend in watch mode.
-
-Start the stack:
-
+Start the complete stack using Docker Compose:
 ```bash
 docker-compose up
 ```
-
-The backend will be available at `http://localhost:8000` and the frontend at `http://localhost:5173`.
+The backend will be available at <http://localhost:8000> and the frontend at
+<http://localhost:5173>.
 
 ### Running without Docker
-
 Backend:
-
 ```bash
 cd backend
 python -m venv env
@@ -52,35 +54,30 @@ uvicorn app.main:app --reload
 ```
 
 Frontend:
-
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-### Log summarization and AI assistance
-
-The repository provides a helper script for inspecting JSON logs and optionally sending a summary to an OpenAI model such as Codex or ChatGPT.
+## Log summarization and AI assistance
+A helper script is provided for inspecting JSON logs and optionally sending a
+summary to an OpenAI model such as GPT-3.5 or GPT-4.
 
 Run the summarizer:
-
 ```bash
 python scripts/log_summarizer.py path/to/log.json
 ```
 
 Send the summary to OpenAI:
-
 ```bash
 python scripts/log_summarizer.py path/to/log.json --send --model gpt-3.5-turbo
 ```
 
-Typical AI prompts:
-
+Example prompts:
 - "Проанализируй лог и предложи, как исправить."
 - "Найди необычные паттерны в этих логах."
 
-### Testing
-
-This repository does not include automated tests. Linting and formatting scripts are available in the frontend `package.json`.
-
+## Testing
+This repository currently does not include automated tests. Linting and
+formatting scripts are available in the frontend `package.json`.
