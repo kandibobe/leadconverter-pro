@@ -12,6 +12,7 @@ orchestrated through Docker Compose.
 - Basic multi-tenant isolation using PostgreSQL row-level security
 - Lightweight event history for leads and quizzes stored as JSONB
 
+
 ## Installation
 ### Clone the repository
 ```bash

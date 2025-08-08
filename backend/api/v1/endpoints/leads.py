@@ -24,8 +24,7 @@ def submit_lead(
     created_lead = crud.lead.create_with_calculation(
         db=db, obj_in=lead_in, tenant_id=tenant_id
     )
-
-    crud.lead_event.create(
+   crud.lead_event.create(
         db=db,
         obj_in=schemas.LeadEventCreate(
             lead_id=created_lead.id,
@@ -37,6 +36,7 @@ def submit_lead(
         ),
         tenant_id=tenant_id,
     )
+
 
     # 2. Преобразуем созданный объект в Pydantic-схему для ответа
     lead_out_data = schemas.lead.LeadOut.model_validate(created_lead)
@@ -63,6 +63,7 @@ def read_leads(
     Получить список всех лидов для админ-панели.
     """
     leads = crud.lead.get_multi(db, tenant_id=tenant_id, skip=skip, limit=limit)
+
     return leads
 
 
@@ -77,3 +78,4 @@ def read_lead_events(
         db=db, lead_id=lead_id, tenant_id=tenant_id
     )
     return events
+
