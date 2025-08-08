@@ -1,3 +1,5 @@
+
+import logging
 import os
 from datetime import datetime
 
@@ -9,7 +11,7 @@ from app.api import deps
 from app.models import Plan, Subscription
 
 router = APIRouter()
-
+logger = logging.getLogger(__name__)
 
 @router.post("/webhook")
 async def stripe_webhook(request: Request, db: Session = Depends(deps.get_db)):
@@ -19,8 +21,9 @@ async def stripe_webhook(request: Request, db: Session = Depends(deps.get_db)):
     try:
         event = stripe.Webhook.construct_event(payload, sig_header, endpoint_secret)
     except Exception as exc:  # pragma: no cover - Stripe handles validation
+        logger.exception("Stripe webhook validation failed") 
         raise HTTPException(status_code=400, detail="Invalid payload") from exc
-
+               
     event_type = event.get("type")
     data = event.get("data", {}).get("object", {})
 

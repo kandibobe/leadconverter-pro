@@ -5,6 +5,7 @@ from typing import List, Any
 from app import crud, schemas
 from app.api import deps
 from app.services import pdf_generator
+from app.services.lead_calculator import LeadCalculator
 
 router = APIRouter()
 
@@ -15,6 +16,7 @@ def submit_lead(
     db: Session = Depends(deps.get_db),
     tenant_id: str = Depends(deps.get_tenant_id),
     lead_in: schemas.lead.LeadCreateIn,
+    calculator: LeadCalculator = Depends(deps.get_lead_calculator),
 ) -> Any:
     """Принять ответы квиза, рассчитать стоимость, сохранить лид и сгенерировать PDF."""
     quiz = crud.quiz.get(db, id=lead_in.quiz_id, tenant_id=tenant_id)
@@ -32,7 +34,7 @@ def submit_lead(
                 raise HTTPException(status_code=400, detail="Invalid option")
 
     created_lead = crud.lead.create_with_calculation(
-        db=db, obj_in=lead_in, tenant_id=tenant_id
+        db=db, obj_in=lead_in, tenant_id=tenant_id, calculator=calculator
     )
 
     lead_out_data = schemas.lead.LeadOut.model_validate(created_lead)

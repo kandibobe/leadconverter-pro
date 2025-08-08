@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import quizService from '../services/quiz.service.js';
 import leadService from '../services/lead.service.js';
 import logger from '../utils/logger.js';
+import emitter from '../utils/eventBus.js';
 
 const getInitialState = () => ({
   quizData: null,
@@ -12,8 +13,6 @@ const getInitialState = () => ({
   clientEmail: '',
   isLeadModalVisible: false,
   isSubmittingLead: false,
-  leadSubmissionError: null,
-  isLeadSubmittedSuccessfully: false,
 });
 
 export const useQuizStore = defineStore('quiz', {
@@ -85,14 +84,15 @@ export const useQuizStore = defineStore('quiz', {
     },
     async submitLead() {
       this.isSubmittingLead = true;
-      this.leadSubmissionError = null;
       try {
         await leadService.create(this.leadPayload);
-        this.closeLeadModal();
-        this.isLeadSubmittedSuccessfully = true;
+        emitter.emit('lead-submitted');
       } catch (error) {
         logger.error('Lead submission failed:', error);
-        this.leadSubmissionError = "Произошла ошибка. Пожалуйста, проверьте email и попробуйте снова.";
+emitter.emit(
+          'lead-submission-error',
+          'Произошла ошибка. Пожалуйста, проверьте email и попробуйте снова.'
+        );
       } finally {
         this.isSubmittingLead = false;
       }
