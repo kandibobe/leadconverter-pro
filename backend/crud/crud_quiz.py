@@ -37,14 +37,16 @@ class CRUDQuiz:
                     text=question_in.text,
                     description=question_in.description,
                     question_type=question_in.question_type,
-                    order=question_in.order
+                    order=question_in.order,
+                    tenant_id=tenant_id,
                 )
                 if question_in.options:
                     for option_in in question_in.options:
                         db_option = Option(
                             text=option_in.text,
                             price_impact=option_in.price_impact,
-                            order=option_in.order
+                            order=option_in.order,
+                            tenant_id=tenant_id,
                         )
                         db_question.options.append(db_option)
                 db_quiz.questions.append(db_question)

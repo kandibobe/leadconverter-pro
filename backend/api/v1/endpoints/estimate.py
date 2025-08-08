@@ -13,6 +13,7 @@ router = APIRouter()
 async def recalc_estimate(
     payload: EstimateRequest,
     db: Session = Depends(deps.get_db),
+    tenant_id: str = Depends(deps.get_tenant_id),
 ) -> EstimateResponse:
-    cost = await run_in_threadpool(calculate_estimate, db, payload)
+    cost = await run_in_threadpool(calculate_estimate, db, payload, tenant_id)
     return EstimateResponse(estimated_cost=cost)

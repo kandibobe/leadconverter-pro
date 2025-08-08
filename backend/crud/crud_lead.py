@@ -17,12 +17,26 @@ class CRUDLead:
 
         # 1. Получаем все опции, которые выбрал пользователь, одним запросом
         chosen_option_ids = [answer.option_id for answer in obj_in.answers if answer.option_id]
-        chosen_options = db.query(quiz_model.Option).filter(quiz_model.Option.id.in_(chosen_option_ids)).all()
+        chosen_options = (
+            db.query(quiz_model.Option)
+            .filter(
+                quiz_model.Option.id.in_(chosen_option_ids),
+                quiz_model.Option.tenant_id == tenant_id,
+            )
+            .all()
+        )
         options_map = {option.id: option for option in chosen_options}
 
         # 2. Обрабатываем ответы
         for answer in obj_in.answers:
-            question = db.query(quiz_model.Question).filter(quiz_model.Question.id == answer.question_id).first()
+            question = (
+                db.query(quiz_model.Question)
+                .filter(
+                    quiz_model.Question.id == answer.question_id,
+                    quiz_model.Question.tenant_id == tenant_id,
+                )
+                .first()
+            )
             if not question:
                 continue
 

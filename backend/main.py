@@ -3,8 +3,10 @@ from fastapi import FastAPI
 
 from app.api.v1.endpoints.api import api_router
 from app.api.v1.endpoints import log_summary
+from app.database import init_db
 
 load_dotenv()
+init_db()
 
 app = FastAPI(
     title="LeadConverter Pro API",
