@@ -5,7 +5,7 @@ from app.api.v1.endpoints.api import api_router
 from app.api.v1.endpoints import log_summary
 
 load_dotenv()
-
+main
 app = FastAPI(
     title="LeadConverter Pro API",
     description="API для интерактивного квиз-калькулятора.",
