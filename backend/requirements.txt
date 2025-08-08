@@ -17,3 +17,6 @@ email-validator==2.1.1
 
 # --- PDF Generation (НОВОЕ) ---
 weasyprint==66.0
+
+# --- Testing ---
+pytest==8.2.2

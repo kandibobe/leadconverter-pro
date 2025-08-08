@@ -82,5 +82,12 @@ Typical AI prompts:
 
 ### Testing
 
-This repository does not include automated tests. Linting and formatting scripts are available in the frontend `package.json`.
+Backend tests are run with `pytest`:
+
+```bash
+cd backend
+pytest
+```
+
+Linting and formatting scripts are available in the frontend `package.json`.
 
