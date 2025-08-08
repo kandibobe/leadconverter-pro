@@ -1,5 +1,7 @@
 from pydantic import BaseModel, EmailStr
-from typing import List, Optional, Dict, Any
+from typing import Dict, List, Optional, Any
+
+from .quiz import QuestionType
 
 # --- Схемы для отображения квиза ---
 
@@ -10,10 +12,11 @@ class Option(BaseModel):
     class Config:
         orm_mode = True
 
+
 class Question(BaseModel):
     id: int
     text: str
-    question_type: str
+    question_type: QuestionType
     options: List[Option]
 
     class Config:
@@ -47,3 +50,4 @@ class Lead(BaseModel):
 
     class Config:
         orm_mode = True
+
