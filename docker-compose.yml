@@ -30,7 +30,8 @@ services:
       context: .
       dockerfile: backend/Dockerfile
     container_name: leadconverter-pro-backend-1
-    command: uvicorn app.main:app --uds /tmp/uvicorn.sock --reload
+    entrypoint: /app/entrypoint.sh
+
     volumes:
       - ./backend:/app
       - uvicorn-sock:/tmp
