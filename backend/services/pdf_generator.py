@@ -1,6 +1,9 @@
 import os
 from weasyprint import HTML
 from app.schemas.lead import LeadOut
+from opentelemetry import trace
+
+tracer = trace.get_tracer(__name__)
 
 # Создаем папку для хранения смет, если ее нет
 PDF_STORAGE_PATH = "generated_pdfs"
@@ -11,8 +14,9 @@ def generate_lead_pdf(lead_data: LeadOut) -> str:
     Генерирует PDF-смету на основе данных лида и сохраняет ее.
     Возвращает путь к файлу.
     """
-    # Формируем красивый HTML-шаблон для сметы
-    html_content = f"""
+    with tracer.start_as_current_span("generate_lead_pdf"):
+        # Формируем красивый HTML-шаблон для сметы
+        html_content = f"""
     <!DOCTYPE html>
     <html lang="ru">
     <head>
@@ -48,11 +52,11 @@ def generate_lead_pdf(lead_data: LeadOut) -> str:
                     </thead>
                     <tbody>
     """
-    
-    for question, answer in lead_data.answers_details.items():
-        html_content += f"<tr><td>{question}</td><td>{answer}</td></tr>"
 
-    html_content += f"""
+        for question, answer in lead_data.answers_details.items():
+            html_content += f"<tr><td>{question}</td><td>{answer}</td></tr>"
+
+        html_content += f"""
                     </tbody>
                 </table>
                 <div class="total">
@@ -64,13 +68,13 @@ def generate_lead_pdf(lead_data: LeadOut) -> str:
     </html>
     """
 
-    # Генерируем PDF
-    pdf_filename = f"lead_{lead_data.id}_estimate.pdf"
-    pdf_filepath = os.path.join(PDF_STORAGE_PATH, pdf_filename)
-    
-    HTML(string=html_content).write_pdf(pdf_filepath)
-    
-    print(f"PDF сгенерирован и сохранен: {pdf_filepath}")
-    
-    # В реальном приложении здесь может быть URL для скачивания
-    return pdf_filepath
+        # Генерируем PDF
+        pdf_filename = f"lead_{lead_data.id}_estimate.pdf"
+        pdf_filepath = os.path.join(PDF_STORAGE_PATH, pdf_filename)
+
+        HTML(string=html_content).write_pdf(pdf_filepath)
+
+        print(f"PDF сгенерирован и сохранен: {pdf_filepath}")
+
+        # В реальном приложении здесь может быть URL для скачивания
+        return pdf_filepath

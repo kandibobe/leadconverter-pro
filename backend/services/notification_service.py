@@ -1,4 +1,7 @@
 from app.schemas.lead import LeadOut
+from opentelemetry import trace
+
+tracer = trace.get_tracer(__name__)
 
 class NotificationService:
     def send_new_lead_notification(self, lead_data: LeadOut):
@@ -6,14 +9,15 @@ class NotificationService:
         Сервис-заглушка для отправки уведомлений.
         В реальном приложении здесь будет логика отправки в Telegram, Email и т.д.
         """
-        print("="*50)
-        print("🚀 НОВЫЙ ЛИД ПОЛУЧЕН! 🚀")
-        print(f"Email клиента: {lead_data.client_email}")
-        print(f"Итоговая стоимость: {lead_data.final_price} RUB")
-        print("Ответы клиента:")
-        for key, value in lead_data.answers_details.items():
-            print(f"  - {key}: {value}")
-        print("="*50)
+        with tracer.start_as_current_span("send_new_lead_notification"):
+            print("="*50)
+            print("🚀 НОВЫЙ ЛИД ПОЛУЧЕН! 🚀")
+            print(f"Email клиента: {lead_data.client_email}")
+            print(f"Итоговая стоимость: {lead_data.final_price} RUB")
+            print("Ответы клиента:")
+            for key, value in lead_data.answers_details.items():
+                print(f"  - {key}: {value}")
+            print("="*50)
         
 
 notification = NotificationService()

@@ -35,6 +35,10 @@ services:
         condition: service_healthy
     env_file:
       - .env
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
+      - OTEL_EXPORTER_OTLP_HEADERS=${OTEL_EXPORTER_OTLP_HEADERS}
+      - OTEL_SERVICE_NAME=${OTEL_SERVICE_NAME}
 
   frontend:
     build:
@@ -50,6 +54,7 @@ services:
       - /app/node_modules
     environment:
       - VITE_API_BASE_URL=http://backend:8000
+      - VITE_OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
     depends_on:
       - backend
 
