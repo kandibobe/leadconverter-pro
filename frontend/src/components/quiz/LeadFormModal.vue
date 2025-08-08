@@ -1,23 +1,72 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { useQuizStore } from '../../stores/quiz.store.js';
 import logger from '../../utils/logger.js';
+import emitter from '../../utils/eventBus.js';
 
 const quizStore = useQuizStore();
 const email = ref('');
+const errorMessage = ref('');
+const successMessage = ref('');
+let debounceTimer = null;
 
 function closeModal() {
   quizStore.closeLeadModal();
 }
+ clearMessages();
 
-  async function handleSubmit() {
-    if (!email.value) {
-      quizStore.leadSubmissionError = "Email не может быть пустым.";
-      return;
-    }
-    logger.log('Submitting lead form', { email: email.value });
-    await quizStore.submitLead(email.value);
+function clearMessages() {
+  errorMessage.value = '';
+  successMessage.value = '';
+}
+
+function validateEmail(value) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(value);
+}
+
+async function submit() {
+  if (!email.value) {
+    errorMessage.value = 'Email не может быть пустым.';
+    return;
+}
+if (!validateEmail(email.value)) {
+    errorMessage.value = 'Некорректный формат email.';
+    return;
   }
+  logger.log('Submitting lead form', { email: email.value });
+  await quizStore.submitLead(email.value);
+}
+
+function handleSubmit() {
+  if (debounceTimer) return;
+  debounceTimer = setTimeout(() => (debounceTimer = null), 1000);
+  submit();
+}
+
+function onLeadSubmitted() {
+  successMessage.value = 'Смета отправлена! Проверьте email.';
+  errorMessage.value = '';
+  email.value = '';
+  setTimeout(() => {
+    closeModal();
+    successMessage.value = '';
+  }, 2000);
+}
+
+function onLeadError(message) {
+  errorMessage.value = message;
+}
+
+onMounted(() => {
+  emitter.on('lead-submitted', onLeadSubmitted);
+  emitter.on('lead-submission-error', onLeadError);
+});
+
+onUnmounted(() => {
+  emitter.off('lead-submitted', onLeadSubmitted);
+  emitter.off('lead-submission-error', onLeadError);
+});
 </script>
 
 <template>
@@ -28,14 +77,17 @@ function closeModal() {
       <p>Введите ваш email, и мы отправим подробный расчет со всеми работами и материалами.</p>
       <form @submit.prevent="handleSubmit">
         <input
-          v-model="email"
+          v-model="quizStore.clientEmail"
           type="email"
           placeholder="your@email.com"
           required
           class="email-input"
         />
-        <div v-if="quizStore.leadSubmissionError" class="error-text">
-          {{ quizStore.leadSubmissionError }}
+        <div v-if="errorMessage" class="error-text">
+          {{ errorMessage }}
+        </div>
+        <div v-if="successMessage" class="success-text">
+          {{ successMessage }}
         </div>
         <button type="submit" class="submit-button" :disabled="quizStore.isSubmittingLead">
           <span v-if="quizStore.isSubmittingLead">Отправка...</span>
@@ -55,4 +107,5 @@ function closeModal() {
 .submit-button { width: 100%; padding: 0.75rem; background-color: #42b983; color: white; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer; }
 .submit-button:disabled { background-color: #aaa; }
 .error-text { color: red; font-size: 0.9rem; }
+.success-text { color: green; font-size: 0.9rem; }
 </style>

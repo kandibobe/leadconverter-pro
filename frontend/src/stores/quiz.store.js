@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import quizService from '../services/quiz.service.js';
 import leadService from '../services/lead.service.js';
 import logger from '../utils/logger.js';
+import emitter from '../utils/eventBus.js';
 
 const getInitialState = () => ({
   quizData: null,
@@ -9,10 +10,9 @@ const getInitialState = () => ({
   error: null,
   selectedOptions: {},
   area: 50,
+  clientEmail: '',
   isLeadModalVisible: false,
   isSubmittingLead: false,
-  leadSubmissionError: null,
-  isLeadSubmittedSuccessfully: false,
 });
 
 export const useQuizStore = defineStore('quiz', {
@@ -32,23 +32,24 @@ export const useQuizStore = defineStore('quiz', {
       return basePricePerMeter * state.area;
     },
     leadPayload: (state) => {
-      const answers_data = {};
+      const answers = [];
       if (state.quizData) {
-        state.quizData.questions.forEach(q => {
+        state.quizData.questions.forEach((q) => {
           if (q.question_type === 'slider') {
-            answers_data[q.text] = `${state.area} м²`;
+            answers.push({ question_id: q.id, value: state.area });
           } else {
             const optionId = state.selectedOptions[q.id];
             if (optionId) {
-              const option = q.options.find(o => o.id === optionId);
-              answers_data[q.text] = option ? option.text : 'Не выбрано';
+              answers.push({ question_id: q.id, option_id: optionId });
             }
           }
         });
       }
       return {
+        quiz_id: state.quizData ? state.quizData.id : undefined,
+        client_email: state.clientEmail,
         final_price: state.totalPrice,
-        answers_data,
+        answers,
       };
     },
   },
@@ -81,17 +82,17 @@ export const useQuizStore = defineStore('quiz', {
     closeLeadModal() {
       this.isLeadModalVisible = false;
     },
-    async submitLead(email) {
+    async submitLead() {
       this.isSubmittingLead = true;
-      this.leadSubmissionError = null;
       try {
-        const payload = { ...this.leadPayload, email };
-        await leadService.create(payload);
-        this.closeLeadModal();
-        this.isLeadSubmittedSuccessfully = true;
+        await leadService.create(this.leadPayload);
+        emitter.emit('lead-submitted');
       } catch (error) {
         logger.error('Lead submission failed:', error);
-        this.leadSubmissionError = "Произошла ошибка. Пожалуйста, проверьте email и попробуйте снова.";
+emitter.emit(
+          'lead-submission-error',
+          'Произошла ошибка. Пожалуйста, проверьте email и попробуйте снова.'
+        );
       } finally {
         this.isSubmittingLead = false;
       }

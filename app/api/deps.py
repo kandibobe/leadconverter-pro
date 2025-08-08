@@ -1,6 +1,7 @@
 from typing import Generator
 from fastapi import Header, Depends
 from sqlalchemy import text
+from app.services.lead_calculator import LeadCalculator
 
 from app.database import SessionLocal
 
@@ -23,3 +24,7 @@ def get_db(tenant_id: str = Depends(get_tenant_id)) -> Generator:
         raise
     finally:
         db.close()
+        
+def get_lead_calculator() -> LeadCalculator:
+    """Provide LeadCalculator service instance."""
+    return LeadCalculator()
