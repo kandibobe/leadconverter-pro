@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from app.models import lead as lead_model
 from app.models import quiz as quiz_model
+from app.models.lead_event import LeadEvent
 from app.schemas import lead as lead_schema
 
 class CRUDLead:
@@ -53,6 +54,13 @@ class CRUDLead:
 
         db_obj = lead_model.Lead(**lead_create_data.model_dump())
         db.add(db_obj)
+        db.flush()
+
+        event_data = lead_create_data.model_dump()
+        event_data["id"] = db_obj.id
+        db_event = LeadEvent(lead_id=db_obj.id, data=event_data)
+        db.add(db_event)
+
         db.commit()
         db.refresh(db_obj)
         return db_obj
