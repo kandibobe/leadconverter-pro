@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import quizService from '../services/quiz.service.js';
 import leadService from '../services/lead.service.js';
+import logger from '../utils/logger.js';
 
 const getInitialState = () => ({
   quizData: null,
@@ -60,7 +61,7 @@ export const useQuizStore = defineStore('quiz', {
         this.quizData = response.data;
       } catch (err) {
         this.error = 'Не удалось загрузить квиз.';
-        console.error(err);
+        logger.error(err);
       } finally {
         this.isLoading = false;
       }
@@ -89,7 +90,7 @@ export const useQuizStore = defineStore('quiz', {
         this.closeLeadModal();
         this.isLeadSubmittedSuccessfully = true;
       } catch (error) {
-        console.error("Lead submission failed:", error);
+        logger.error('Lead submission failed:', error);
         this.leadSubmissionError = "Произошла ошибка. Пожалуйста, проверьте email и попробуйте снова.";
       } finally {
         this.isSubmittingLead = false;
