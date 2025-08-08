@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from app.api.v1.api import api_router
+from app.api import leads as lead_api
 from app.database import Base, engine
 
 # Создаем таблицы в БД (для первого запуска)
@@ -14,6 +15,7 @@ app = FastAPI(
 
 # Подключаем роутеры
 app.include_router(api_router, prefix="/api/v1")
+app.include_router(lead_api.router, prefix="/api")
 
 @app.get("/")
 def read_root():

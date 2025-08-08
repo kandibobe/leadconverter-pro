@@ -37,11 +37,13 @@ class LeadAnswer(BaseModel):
 class LeadCreate(BaseModel):
     quiz_id: int
     client_email: EmailStr
+    utm_source: Optional[str] = None
     answers: List[LeadAnswer]
 
 class Lead(BaseModel):
     id: int
     client_email: EmailStr
+    utm_source: Optional[str] = None
     estimated_cost: float
     details: Dict[str, Any]
 

@@ -7,8 +7,9 @@ class Lead(Base):
     id = Column(Integer, primary_key=True, index=True)
     quiz_id = Column(Integer, nullable=False)
     client_email = Column(String, index=True, nullable=False)
+    utm_source = Column(String(128), nullable=True)
     final_price = Column(Float, nullable=False)
-    
+
     # Используем JSON для гибкого хранения расшифровки ответов
     answers_details = Column(JSON, nullable=False)
     

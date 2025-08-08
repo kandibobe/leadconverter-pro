@@ -30,5 +30,6 @@ class Lead(Base):
     __tablename__ = "leads"
     id = Column(Integer, primary_key=True, index=True)
     client_email = Column(String, index=True)
+    utm_source = Column(String(128), nullable=True)
     estimated_cost = Column(Float)
     details = Column(JSON) # Здесь будем хранить все ответы квиза

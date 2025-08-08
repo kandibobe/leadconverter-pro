@@ -11,12 +11,14 @@ class LeadAnswerIn(BaseModel):
 class LeadCreateIn(BaseModel):
     quiz_id: int
     client_email: EmailStr
+    utm_source: Optional[str] = None
     answers: List[LeadAnswerIn]
 
 # Схема для внутреннего использования при создании в CRUD
 class LeadCreateInternal(BaseModel):
     quiz_id: int
     client_email: EmailStr
+    utm_source: Optional[str] = None
     final_price: float
     answers_details: Dict[str, Any]
 
@@ -24,6 +26,7 @@ class LeadCreateInternal(BaseModel):
 class LeadOut(BaseModel):
     id: int
     client_email: EmailStr
+    utm_source: Optional[str] = None
     final_price: float = Field(..., description="Итоговая рассчитанная стоимость")
     answers_details: Dict[str, Any] = Field(..., description="Детализация ответов")
     pdf_url: Optional[str] = Field(None, description="Ссылка на сгенерированный PDF")
