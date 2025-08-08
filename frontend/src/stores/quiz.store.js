@@ -4,7 +4,7 @@ import leadService from '../services/lead.service.js';
 import logger from '../utils/logger.js';
 
 const getInitialState = () => ({
-  quizData: null,
+  quiz: null,
   isLoading: false,
   error: null,
   selectedOptions: {},
@@ -19,9 +19,9 @@ export const useQuizStore = defineStore('quiz', {
   state: getInitialState,
   getters: {
     totalPrice: (state) => {
-      if (!state.quizData) return 0;
+      if (!state.quiz) return 0;
       const basePricePerMeter = Object.values(state.selectedOptions).reduce((total, optionId) => {
-        for (const question of state.quizData.questions) {
+        for (const question of state.quiz.questions) {
           const option = question.options.find(o => o.id === optionId);
           if (option) {
             return total + option.price_impact;
@@ -33,8 +33,8 @@ export const useQuizStore = defineStore('quiz', {
     },
     leadPayload: (state) => {
       const answers_data = {};
-      if (state.quizData) {
-        state.quizData.questions.forEach(q => {
+      if (state.quiz) {
+        state.quiz.questions.forEach(q => {
           if (q.question_type === 'slider') {
             answers_data[q.text] = `${state.area} м²`;
           } else {
@@ -51,6 +51,10 @@ export const useQuizStore = defineStore('quiz', {
         answers_data,
       };
     },
+    currentQuestion: (state) => {
+      if (!state.quiz) return null;
+      return state.quiz.questions.find(q => !state.selectedOptions[q.id]) || null;
+    },
   },
   actions: {
     async fetchQuiz(id) {
@@ -58,7 +62,7 @@ export const useQuizStore = defineStore('quiz', {
       this.error = null;
       try {
         const response = await quizService.getQuizById(id);
-        this.quizData = response.data;
+        this.quiz = response.data;
       } catch (err) {
         this.error = 'Не удалось загрузить квиз.';
         logger.error(err);
