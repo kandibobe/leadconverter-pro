@@ -1,23 +1,21 @@
 <script setup>
-import { ref } from 'vue';
 import { useQuizStore } from '../../stores/quiz.store.js';
 import logger from '../../utils/logger.js';
 
 const quizStore = useQuizStore();
-const email = ref('');
 
 function closeModal() {
   quizStore.closeLeadModal();
 }
 
-  async function handleSubmit() {
-    if (!email.value) {
-      quizStore.leadSubmissionError = "Email не может быть пустым.";
-      return;
-    }
-    logger.log('Submitting lead form', { email: email.value });
-    await quizStore.submitLead(email.value);
+async function handleSubmit() {
+  if (!quizStore.clientEmail) {
+    quizStore.leadSubmissionError = "Email не может быть пустым.";
+    return;
   }
+  logger.log('Submitting lead form', { email: quizStore.clientEmail });
+  await quizStore.submitLead();
+}
 </script>
 
 <template>
@@ -28,7 +26,7 @@ function closeModal() {
       <p>Введите ваш email, и мы отправим подробный расчет со всеми работами и материалами.</p>
       <form @submit.prevent="handleSubmit">
         <input
-          v-model="email"
+          v-model="quizStore.clientEmail"
           type="email"
           placeholder="your@email.com"
           required
