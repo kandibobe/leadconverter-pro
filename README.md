@@ -1,3 +1,4 @@
+8ars8g-codex/implement-log-summarizer-script
 # leadconverter-pro
 
 ## Installation
@@ -82,3 +83,4 @@ Typical AI prompts:
 ### Testing
 
 This repository does not include automated tests. Linting and formatting scripts are available in the frontend `package.json`.
+
