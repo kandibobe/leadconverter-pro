@@ -1,13 +1,21 @@
 from typing import Generator
+from fastapi import Header, Depends
+from sqlalchemy import text
+
 from app.database import SessionLocal
 
-def get_db() -> Generator:
+def get_tenant_id(x_tenant_id: str = Header(...)) -> str:
+    """Получить идентификатор арендатора из заголовка."""
+    return x_tenant_id
+
+
+def get_db(tenant_id: str = Depends(get_tenant_id)) -> Generator:
     """
-    Зависимость (dependency), которая предоставляет сессию базы данных для одного запроса.
-    Гарантирует, что сессия будет закрыта после выполнения запроса.
+    Зависимость, предоставляющая сессию базы данных и устанавливающая контекст арендатора.
     """
     try:
         db = SessionLocal()
+        db.execute(text("SET app.tenant_id = :tenant_id"), {"tenant_id": tenant_id})
         yield db
     finally:
         db.close()

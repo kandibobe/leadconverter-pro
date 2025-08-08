@@ -45,6 +45,7 @@ class QuizCreate(QuizBase):
 class Quiz(QuizBase):
     id: int
     questions: List[Question] = Field(default_factory=list)
+    tenant_id: str
 
     class Config:
         from_attributes = True
