@@ -83,6 +83,4 @@ Example prompts:
 - "Проанализируй лог и предложи, как исправить."
 - "Найди необычные паттерны в этих логах."
 
-## Testing
-This repository currently does not include automated tests. Linting and
-formatting scripts are available in the frontend `package.json`.
+
