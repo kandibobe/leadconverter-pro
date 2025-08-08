@@ -1,12 +1,15 @@
 """Endpoints for log summarization."""
 
-import os
+import logging
 
 import openai
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, Security
 from fastapi.security.api_key import APIKeyHeader
 
+from app.core.config import settings
 
+
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
@@ -14,8 +17,9 @@ api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
 
 def get_api_key(api_key: str = Security(api_key_header)) -> str:
     """Retrieve and validate API key from headers."""
-    expected_key = os.getenv("LOG_SUMMARY_API_KEY")
+    expected_key = settings.LOG_SUMMARY_API_KEY
     if not expected_key:
+        logger.error("LOG_SUMMARY_API_KEY not configured")
         raise HTTPException(status_code=500, detail="Log summary API key not configured")
     if api_key != expected_key:
         raise HTTPException(status_code=403, detail="Not enough permissions")
@@ -35,9 +39,10 @@ async def summarize_log(
     except Exception as exc:  # pragma: no cover - simple validation
         raise HTTPException(status_code=400, detail="Unable to read uploaded file") from exc
 
-    api_key = os.getenv("OPENAI_API_KEY")
+    api_key = settings.OPENAI_API_KEY
     if not api_key:
-        raise HTTPException(status_code=500, detail="OpenAI API key not configured")
+         logger.error("OPENAI_API_KEY not configured")
+         raise HTTPException(status_code=500, detail="OpenAI API key not configured")
 
     openai.api_key = api_key
     prompt = (
@@ -56,7 +61,8 @@ async def summarize_log(
             ],
         )
     except Exception as exc:  # pragma: no cover - API errors
-        raise HTTPException(status_code=500, detail=str(exc)) from exc
+        logger.exception("OpenAI summarization failed")
+        raise HTTPException(status_code=502, detail="OpenAI request failed") from exc
 
     summary = response.choices[0].message["content"].strip()
     return {"summary": summary}

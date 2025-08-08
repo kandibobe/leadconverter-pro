@@ -1,6 +1,21 @@
-POSTGRES_PASSWORD=os.getenv("POSTGRES_PASSWORD", ""),
-POSTGRES_SERVER=os.getenv("POSTGRES_SERVER", ""),
-POSTGRES_DB=os.getenv("POSTGRES_DB", ""),
+"""Application configuration and environment helpers."""
+
+import os
+from pydantic_settings import BaseSettings
+
+
+# Build a default DATABASE_URL for convenience.  The variables are retrieved only
+# once at import time so repeated imports do not continually hit ``os.getenv``.
+POSTGRES_USER = os.getenv("POSTGRES_USER", "")
+POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD", "")
+POSTGRES_SERVER = os.getenv("POSTGRES_SERVER", "")
+POSTGRES_DB = os.getenv("POSTGRES_DB", "")
+
+raw_db_url = (
+    f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_SERVER}/{POSTGRES_DB}"
+    if POSTGRES_SERVER
+    else ""
+)
 os.environ["DATABASE_URL"] = raw_db_url
 
 class Settings(BaseSettings):
@@ -27,7 +42,10 @@ class Settings(BaseSettings):
     GRPC_KEY_PATH: str | None = None
     GRPC_CA_PATH: str | None = None
 
+    # API keys
+    OPENAI_API_KEY: str | None = os.getenv("OPENAI_API_KEY")
+    LOG_SUMMARY_API_KEY: str | None = os.getenv("LOG_SUMMARY_API_KEY")
+
     class Config:
         case_sensitive = True
-
 settings = Settings()
