@@ -29,6 +29,6 @@ def calculate_estimate(db: Session, payload: EstimateRequest) -> float:
             except (ValueError, TypeError):
                 area_multiplier = 1.0
         elif ans.option_id in options_map:
-            base_price += options_map[ans.option_id].value
+            base_price += options_map[ans.option_id].price_impact
 
     return base_price * area_multiplier

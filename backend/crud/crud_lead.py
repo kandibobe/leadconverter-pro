@@ -34,7 +34,7 @@ class CRUDLead:
             # Для всех остальных вопросов (радио, чекбоксы)
             elif answer.option_id in options_map:
                 option = options_map[answer.option_id]
-                base_price += option.value
+                base_price += option.price_impact
                 answers_details[question.text] = option.text
         
         # 3. Рассчитываем итоговую стоимость
