@@ -25,5 +25,6 @@ yarn-error.log*
 Thumbs.db
 backend_log.txt
 
-# Legacy directory
+# Legacy directories
 leadconverter-pro/
+leadconverter-pro 1/
