@@ -1,8 +1,7 @@
 from sqlalchemy import Column, Integer, String, Float, ForeignKey, Text
 from sqlalchemy.orm import relationship
 
-# Импорт Base теперь абсолютно безопасен, так как base.py больше ничего не импортирует.
-from app.db.base import Base
+from app.database import Base
 
 class Quiz(Base):
     __tablename__ = "quizzes"

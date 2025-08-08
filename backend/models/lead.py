@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Float, JSON, DateTime, func
-from .database import Base
+from app.database import Base
 
 class Lead(Base):
     __tablename__ = "leads"
