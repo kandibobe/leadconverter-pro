@@ -1,7 +1,7 @@
 """Enable basic row-level security for multi-tenant isolation."""
 
 from sqlalchemy import text
-from app.database import engine
+from backend.database import engine
 
 
 def main() -> None:
@@ -11,14 +11,14 @@ def main() -> None:
         conn.execute(text("ALTER TABLE leads FORCE ROW LEVEL SECURITY"))
         conn.execute(
             text(
-                "CREATE POLICY IF NOT EXISTS tenant_isolation_leads ON leads USING (tenant_id = current_setting('app.tenant_id')::text)"
+                "CREATE POLICY IF NOT EXISTS tenant_isolation_leads ON leads USING (tenant_id = current_setting('backend.tenant_id')::text)"
             )
         )
         conn.execute(text("ALTER TABLE quizzes ENABLE ROW LEVEL SECURITY"))
         conn.execute(text("ALTER TABLE quizzes FORCE ROW LEVEL SECURITY"))
         conn.execute(
             text(
-                "CREATE POLICY IF NOT EXISTS tenant_isolation_quizzes ON quizzes USING (tenant_id = current_setting('app.tenant_id')::text)"
+                "CREATE POLICY IF NOT EXISTS tenant_isolation_quizzes ON quizzes USING (tenant_id = current_setting('backend.tenant_id')::text)"
             )
         )
 

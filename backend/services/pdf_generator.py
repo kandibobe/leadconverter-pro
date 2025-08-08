@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from weasyprint import HTML
-from app.schemas.lead import LeadOut
+from backend.schemas.lead import LeadOut
 
 # Создаем папку для хранения смет, если ее нет
 PDF_STORAGE_PATH = "generated_pdfs"

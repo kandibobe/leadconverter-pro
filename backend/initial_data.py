@@ -1,7 +1,7 @@
 # /backend/initial_data.py
 
-from app.database import SessionLocal
-from app.models import Quiz, Question, Option
+from backend.database import SessionLocal
+from backend.models import Quiz, Question, Option
 
 def seed_data():
     db = SessionLocal()

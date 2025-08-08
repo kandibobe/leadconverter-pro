@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session, selectinload
-from app.models.quiz import Quiz, Question, Option
-from app.schemas.quiz import QuizCreate
+from backend.models.quiz import Quiz, Question, Option
+from backend.schemas.quiz import QuizCreate
 
 class CRUDQuiz:
     def get(self, db: Session, id: int, tenant_id: str) -> Quiz | None:

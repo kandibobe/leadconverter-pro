@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
-from app.models import lead as lead_model
-from app.models import quiz as quiz_model
-from app.schemas import lead as lead_schema
+from backend.models import lead as lead_model
+from backend.models import quiz as quiz_model
+from backend.schemas import lead as lead_schema
 
 class CRUDLead:
     def create_with_calculation(
@@ -75,3 +75,4 @@ class CRUDLead:
 
 
 lead = CRUDLead()
+

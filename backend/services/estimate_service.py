@@ -1,7 +1,7 @@
-# backend/app/services/estimate_service.py
+# backend/services/estimate_service.py
 from sqlalchemy.orm import Session
-from app.models import quiz as quiz_model
-from app.schemas.estimate import EstimateRequest
+from backend.models import quiz as quiz_model
+from backend.schemas.estimate import EstimateRequest
 
 def calculate_estimate(db: Session, payload: EstimateRequest) -> float:
     base_price = 0.0

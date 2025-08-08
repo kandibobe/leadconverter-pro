@@ -1,7 +1,7 @@
 import grpc
-from app.api.protos import lead_pb2, lead_pb2_grpc
-from app.schemas.lead import LeadOut
-from app.core.config import settings
+from backend.api.protos import lead_pb2, lead_pb2_grpc
+from backend.schemas.lead import LeadOut
+from backend.core.config import settings
 
 class LeadServiceClient:
     """Simple gRPC client for interacting with the LeadService."""

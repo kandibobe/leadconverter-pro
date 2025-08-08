@@ -5,8 +5,8 @@ import stripe
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 
-from app.api import deps
-from app.models import Plan, Subscription
+from backend.api import deps
+from backend.models import Plan, Subscription
 
 router = APIRouter()
 

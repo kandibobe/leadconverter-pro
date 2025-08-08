@@ -1,6 +1,6 @@
 """Utility script to create database tables."""
 
-from app.database import Base, engine
+from backend.database import Base, engine
 
 
 def main() -> None:
