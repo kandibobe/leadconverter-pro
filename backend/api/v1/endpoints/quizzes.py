@@ -1,12 +1,14 @@
 import logging
+import os
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import Any
 from app import crud, schemas
 from app.api import deps
 
-# Настраиваем базовый логгер
-logging.basicConfig(level=logging.INFO)
+LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
+logging.basicConfig(level=getattr(logging, LOG_LEVEL, logging.INFO))
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
@@ -19,7 +21,8 @@ def read_quiz(
     """
     Получить полную структуру квиза по его ID.
     """
-    logger.info(f"API: Request received for quiz_id: {quiz_id}")
+    logger.info("API: Request received for quiz_id: %s", quiz_id)
+    logger.debug("API: Fetching quiz from database")
     quiz = crud.quiz.get(db=db, id=quiz_id)
     
     if not quiz:
@@ -29,5 +32,9 @@ def read_quiz(
             detail="Quiz not found",
         )
     
-    logger.info(f"API: Returning quiz '{quiz.title}' with {len(quiz.questions)} questions.")
+    logger.info(
+        "API: Returning quiz '%s' with %s questions.",
+        quiz.title,
+        len(quiz.questions),
+    )
     return quiz
