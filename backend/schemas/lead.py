@@ -19,6 +19,7 @@ class LeadCreateInternal(BaseModel):
     client_email: EmailStr
     final_price: float
     answers_details: Dict[str, Any]
+    tenant_id: str
 
 # Финальная схема для ответа API (то, что мы возвращаем фронтенду)
 class LeadOut(BaseModel):
@@ -27,6 +28,7 @@ class LeadOut(BaseModel):
     final_price: float = Field(..., description="Итоговая рассчитанная стоимость")
     answers_details: Dict[str, Any] = Field(..., description="Детализация ответов")
     pdf_url: Optional[str] = Field(None, description="Ссылка на сгенерированный PDF")
+    tenant_id: str
 
     class Config:
         from_attributes = True

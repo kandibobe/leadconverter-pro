@@ -15,12 +15,13 @@ router = APIRouter()
 def read_quiz(
     quiz_id: int,
     db: Session = Depends(deps.get_db),
+    tenant_id: str = Depends(deps.get_tenant_id),
 ) -> Any:
     """
     Получить полную структуру квиза по его ID.
     """
     logger.info(f"API: Request received for quiz_id: {quiz_id}")
-    quiz = crud.quiz.get(db=db, id=quiz_id)
+    quiz = crud.quiz.get(db=db, id=quiz_id, tenant_id=tenant_id)
     
     if not quiz:
         logger.warning(f"API: Quiz with id {quiz_id} not found in DB.")

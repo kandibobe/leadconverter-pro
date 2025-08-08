@@ -9,6 +9,7 @@ orchestrated through Docker Compose.
 - Vue 3 frontend powered by Vite
 - Dockerized development environment
 - Log summarization script with optional OpenAI integration
+- Basic multi-tenant isolation using PostgreSQL row-level security
 
 ## Installation
 ### Clone the repository
@@ -42,6 +43,10 @@ docker-compose up
 ```
 The backend will be available at <http://localhost:8000> and the frontend at
 <http://localhost:5173>.
+
+### Multi-tenant requests
+Each API request must include an `X-Tenant-ID` header identifying the tenant.
+Row-level security policies use this value to isolate data per tenant.
 
 ### Running without Docker
 Backend:

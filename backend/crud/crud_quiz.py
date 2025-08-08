@@ -3,24 +3,28 @@ from app.models.quiz import Quiz, Question, Option
 from app.schemas.quiz import QuizCreate
 
 class CRUDQuiz:
-    def get(self, db: Session, id: int) -> Quiz | None:
+    def get(self, db: Session, id: int, tenant_id: str) -> Quiz | None:
         """
         Получение квиза по ID с принудительной "жадной" загрузкой (eager loading)
         всех связанных вопросов и, для каждого вопроса, всех связанных опций.
         Это решает проблему ленивой загрузки и гарантирует, что Pydantic получит полные данные.
         """
-        return db.query(Quiz).options(
-            selectinload(Quiz.questions).selectinload(Question.options)
-        ).filter(Quiz.id == id).first()
+        return (
+            db.query(Quiz)
+            .options(selectinload(Quiz.questions).selectinload(Question.options))
+            .filter(Quiz.id == id, Quiz.tenant_id == tenant_id)
+            .first()
+        )
 
-    def create(self, db: Session, *, obj_in: QuizCreate) -> Quiz:
+    def create(self, db: Session, *, obj_in: QuizCreate, tenant_id: str) -> Quiz:
         """
         Создание квиза с рекурсивным созданием всех вложенных
         вопросов и вариантов ответов.
         """
         db_quiz = Quiz(
             title=obj_in.title,
-            description=obj_in.description
+            description=obj_in.description,
+            tenant_id=tenant_id,
         )
         
         # Мы больше не добавляем объекты в сессию по одному.
