@@ -1,7 +1,7 @@
 from app.schemas.estimate import EstimateRequest
 from app.schemas.lead import LeadAnswerIn
 from app.models import quiz as quiz_model
-from backend.services.estimate_service import calculate_estimate
+from app.services.estimate_service import calculate_estimate
 
 
 def _create_questions(db):

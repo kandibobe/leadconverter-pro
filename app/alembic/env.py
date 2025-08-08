@@ -10,10 +10,7 @@ BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 if BASE_DIR not in sys.path:
     sys.path.append(BASE_DIR)
 
-# Alias 'backend' package as 'app' for imports like 'from app.database import Base'
-import backend as app_module  # type: ignore
-sys.modules['app'] = app_module
-
+# Import application modules
 from app.core.config import settings  # noqa: E402
 from app.database import Base  # noqa: E402
 

@@ -26,11 +26,11 @@ services:
   backend:
     build:
       context: .
-      dockerfile: backend/Dockerfile
+      dockerfile: app/Dockerfile
     container_name: leadconverter-pro-backend-1
     command: uvicorn main:app --uds /tmp/uvicorn.sock --reload
     volumes:
-      - ./backend:/app
+      - ./app:/app
       - uvicorn-sock:/tmp
     ports:
       - "8000:8000"

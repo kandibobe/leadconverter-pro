@@ -1,4 +1,4 @@
-# /backend/initial_data.py
+# /app/initial_data.py
 
 from app.database import SessionLocal
 from app.models import Quiz, Question, Option

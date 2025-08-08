@@ -2,7 +2,7 @@ from typing import Generator
 from fastapi import Header, Depends
 from sqlalchemy import text
 
-from backend.database import SessionLocal
+from app.database import SessionLocal
 
 def get_tenant_id(x_tenant_id: str = Header(...)) -> str:
     """Получить идентификатор арендатора из заголовка."""
