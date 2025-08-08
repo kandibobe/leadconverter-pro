@@ -1,3 +1,4 @@
+8ars8g-codex/implement-log-summarizer-script
 # leadconverter-pro
 
 ## Installation
@@ -58,6 +59,28 @@ npm install
 npm run dev
 ```
 
+### Log summarization and AI assistance
+
+The repository provides a helper script for inspecting JSON logs and optionally sending a summary to an OpenAI model such as Codex or ChatGPT.
+
+Run the summarizer:
+
+```bash
+python scripts/log_summarizer.py path/to/log.json
+```
+
+Send the summary to OpenAI:
+
+```bash
+python scripts/log_summarizer.py path/to/log.json --send --model gpt-3.5-turbo
+```
+
+Typical AI prompts:
+
+- "Проанализируй лог и предложи, как исправить."
+- "Найди необычные паттерны в этих логах."
+
 ### Testing
 
 This repository does not include automated tests. Linting and formatting scripts are available in the frontend `package.json`.
+

@@ -15,4 +15,4 @@ api_router.include_router(quizzes.router, prefix="/quizzes", tags=["quizzes"])
 api_router.include_router(leads.router, prefix="/leads", tags=["leads"])  # Новая строка
 api_router.include_router(
     dashboard.router, prefix="/dashboard", tags=["dashboard"]
-)  # Новая строка
+)  
