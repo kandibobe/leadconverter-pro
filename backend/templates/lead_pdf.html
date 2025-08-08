@@ -22,7 +22,7 @@
             <p>Предварительная смета на ремонт</p>
         </div>
         <div class="content">
-            <p><strong>Клиент:</strong> {{ lead.client_email }}</p>
+            <p><strong>Клиент:</strong> {{ lead.client_email | e }}</p>
             <h3>Детализация заказа:</h3>
             <table>
                 <thead>
@@ -33,7 +33,7 @@
                 </thead>
                 <tbody>
                     {% for question, answer in lead.answers_details.items() %}
-                    <tr><td>{{ question }}</td><td>{{ answer }}</td></tr>
+                    <tr><td>{{ question | e }}</td><td>{{ answer | e }}</td></tr>
                     {% endfor %}
                 </tbody>
             </table>
