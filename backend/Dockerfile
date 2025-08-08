@@ -28,10 +28,10 @@ RUN pip install --no-cache /wheels/*
 
 # Копируем код нашего приложения, указывая путь от корня проекта
 COPY ./backend /app
-COPY backend/entrypoint.sh /app/entrypoint.sh
+# Делаем скрипт запуска исполняемым
+
 RUN chmod +x /app/entrypoint.sh
 
 # Открываем порт
 EXPOSE 8000
 
-ENTRYPOINT ["./entrypoint.sh"]
