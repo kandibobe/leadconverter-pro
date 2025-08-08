@@ -15,12 +15,15 @@
         <div class="metric-label">Средний чек</div>
       </div>
     </div>
+
+    <AIInsights />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import dashboardService from '@/services/dashboard.service.js';
+import { ref, onMounted } from 'vue'
+import dashboardService from '@/services/dashboard.service.js'
+import AIInsights from '@/components/AIInsights.vue'
 
 const metrics = ref(null);
 const loading = ref(true);
