@@ -13,4 +13,5 @@ echo "Applying database migrations..."
 alembic upgrade head
 
 echo "Starting server..."
-exec uvicorn main:app --host 0.0.0.0 --port 8000
+# Run Uvicorn bound to a Unix Domain Socket
+exec uvicorn main:app --uds /tmp/uvicorn.sock

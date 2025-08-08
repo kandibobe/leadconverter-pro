@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package lead;
+
+message LeadData {
+  string client_email = 1;
+  double final_price = 2;
+}
+
+message PdfReply {
+  string path = 1;
+}
+
+message Empty {}
+
+service LeadService {
+  rpc SendNotification(LeadData) returns (Empty);
+  rpc GeneratePdf(LeadData) returns (PdfReply);
+}
