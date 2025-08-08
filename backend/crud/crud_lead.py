@@ -20,9 +20,14 @@ class CRUDLead:
         chosen_options = db.query(quiz_model.Option).filter(quiz_model.Option.id.in_(chosen_option_ids)).all()
         options_map = {option.id: option for option in chosen_options}
 
+         # 1.1. Получаем все вопросы одним запросом
+        question_ids = [answer.question_id for answer in obj_in.answers]
+        questions = db.query(quiz_model.Question).filter(quiz_model.Question.id.in_(question_ids)).all()
+        questions_map = {question.id: question for question in questions}
+
         # 2. Обрабатываем ответы
         for answer in obj_in.answers:
-            question = db.query(quiz_model.Question).filter(quiz_model.Question.id == answer.question_id).first()
+            question =  question = questions_map.get(answer.question_id)
             if not question:
                 continue
 

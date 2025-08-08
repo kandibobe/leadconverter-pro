@@ -15,12 +15,16 @@ def calculate_estimate(db: Session, payload: EstimateRequest) -> float:
     )
     options_map = {opt.id: opt for opt in options}
 
+    question_ids = [a.question_id for a in payload.answers]
+    questions = (
+        db.query(quiz_model.Question)
+        .filter(quiz_model.Question.id.in_(question_ids))
+        .all()
+    )
+    questions_map = {q.id: q for q in questions}
+
     for ans in payload.answers:
-        question = (
-            db.query(quiz_model.Question)
-            .filter(quiz_model.Question.id == ans.question_id)
-            .first()
-        )
+        question = questions_map.get(ans.question_id)
         if not question:
             continue
         if question.question_type == "slider":

@@ -14,4 +14,4 @@ alembic upgrade head
 
 echo "Starting server..."
 # Run Uvicorn bound to a Unix Domain Socket
-exec uvicorn main:app --uds /tmp/uvicorn.sock
+exec "$@"

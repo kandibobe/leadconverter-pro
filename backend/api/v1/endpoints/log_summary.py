@@ -3,14 +3,32 @@
 import os
 
 import openai
-from fastapi import APIRouter, File, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, Security
+from fastapi.security.api_key import APIKeyHeader
+
 
 router = APIRouter()
 
+api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
+
+
+def get_api_key(api_key: str = Security(api_key_header)) -> str:
+    """Retrieve and validate API key from headers."""
+    expected_key = os.getenv("LOG_SUMMARY_API_KEY")
+    if not expected_key:
+        raise HTTPException(status_code=500, detail="Log summary API key not configured")
+    if api_key != expected_key:
+        raise HTTPException(status_code=403, detail="Not enough permissions")
+    return api_key
 
 @router.post("/summarize-log")
-async def summarize_log(file: UploadFile = File(...)):
-    """Summarize an uploaded log file using OpenAI."""
+async def summarize_log(
+    file: UploadFile = File(...), api_key: str = Depends(get_api_key)
+):
+    """Summarize an uploaded log file using OpenAI.
+
+    Requires a valid token passed via the `X-API-Key` header.
+    """
     try:
         content_bytes = await file.read()
         log_text = content_bytes.decode("utf-8")
