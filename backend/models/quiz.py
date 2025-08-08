@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, Text
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, Text, text
 from sqlalchemy.orm import relationship
 
 from app.database import Base
@@ -6,7 +6,9 @@ from app.database import Base
 class Quiz(Base):
     __tablename__ = "quizzes"
     id = Column(Integer, primary_key=True, index=True)
-    tenant_id = Column(String, index=True, nullable=False)
+    tenant_id = Column(
+        String, index=True, nullable=False, server_default=text("current_setting('app.tenant_id')")
+    )
     title = Column(String, index=True, nullable=False)
     description = Column(Text, nullable=True)
     questions = relationship("Question", back_populates="quiz", cascade="all, delete-orphan")
@@ -14,6 +16,9 @@ class Quiz(Base):
 class Question(Base):
     __tablename__ = "questions"
     id = Column(Integer, primary_key=True, index=True)
+    tenant_id = Column(
+        String, index=True, nullable=False, server_default=text("current_setting('app.tenant_id')")
+    )
     text = Column(String, nullable=False)
     description = Column(Text, nullable=True)
     question_type = Column(String, default="single-choice")
@@ -25,6 +30,9 @@ class Question(Base):
 class Option(Base):
     __tablename__ = "options"
     id = Column(Integer, primary_key=True, index=True)
+    tenant_id = Column(
+        String, index=True, nullable=False, server_default=text("current_setting('app.tenant_id')")
+    )
     text = Column(String, nullable=False)
     price_impact = Column(Float, default=0.0)
     order = Column(Integer, nullable=False)

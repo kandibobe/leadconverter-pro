@@ -1,8 +1,7 @@
 from typing import Generator
 from fastapi import Header, Depends
-from sqlalchemy import text
 
-from app.database import SessionLocal
+from app.database import get_db as db_session
 
 def get_tenant_id(x_tenant_id: str = Header(...)) -> str:
     """Получить идентификатор арендатора из заголовка."""
@@ -10,12 +9,5 @@ def get_tenant_id(x_tenant_id: str = Header(...)) -> str:
 
 
 def get_db(tenant_id: str = Depends(get_tenant_id)) -> Generator:
-    """
-    Зависимость, предоставляющая сессию базы данных и устанавливающая контекст арендатора.
-    """
-    try:
-        db = SessionLocal()
-        db.execute(text("SET app.tenant_id = :tenant_id"), {"tenant_id": tenant_id})
-        yield db
-    finally:
-        db.close()
+    """Предоставляет сессию БД для указанного tenant_id."""
+    yield from db_session(tenant_id)
