@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useQuizStore } from '../../stores/quiz.store.js';
+import logger from '../../utils/logger.js';
 
 const quizStore = useQuizStore();
 const email = ref('');
@@ -9,13 +10,14 @@ function closeModal() {
   quizStore.closeLeadModal();
 }
 
-async function handleSubmit() {
-  if (!email.value) {
-    quizStore.leadSubmissionError = "Email не может быть пустым.";
-    return;
+  async function handleSubmit() {
+    if (!email.value) {
+      quizStore.leadSubmissionError = "Email не может быть пустым.";
+      return;
+    }
+    logger.log('Submitting lead form', { email: email.value });
+    await quizStore.submitLead(email.value);
   }
-  await quizStore.submitLead(email.value);
-}
 </script>
 
 <template>
