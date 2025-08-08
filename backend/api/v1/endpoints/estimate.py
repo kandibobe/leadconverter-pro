@@ -4,9 +4,11 @@ from fastapi.concurrency import run_in_threadpool
 from sqlalchemy.orm import Session
 
 from ... import deps
+
 from ...schemas.estimate import EstimateRequest, EstimateResponse
 from app.services.lead_calculator import LeadCalculator
 from app.services.estimate_service import calculate_estimate
+
 
 router = APIRouter()
 
