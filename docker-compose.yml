@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   db:
     image: postgres:15-alpine
@@ -13,44 +11,36 @@ services:
     ports:
       - "5432:5432"
     healthcheck:
-      # внутри контейнера лучше явно идти на 127.0.0.1
-      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB -h 127.0.0.1 -p 5432 || exit 1"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME} -h localhost -p 5432"]
       interval: 10s
       timeout: 5s
       retries: 5
 
   backend:
-    build:
-      context: .
-      dockerfile: backend/Dockerfile
+    image: leadconverter-pro-backend:dev   # используем уже собранный образ
     container_name: leadconverter-pro-backend-1
     working_dir: /app/backend
-    # слушаем TCP-порт, а не UNIX socket
-    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
-    volumes:
-      - .:/app
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
     ports:
       - "8000:8000"
     depends_on:
       db:
         condition: service_healthy
     env_file:
-      - .env.docker
+      - .env
+    volumes:
+      - .:/app
+
 
   frontend:
     build:
       context: .
       dockerfile: frontend/Dockerfile.dev
-    container_name: leadconverter-pro-frontend-1
-    ports:
-      - "5173:5173"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    environment:
-      - VITE_API_BASE_URL=http://backend:8000
-    depends_on:
-      - backend
+      container_name: leadconverter-pro-frontend-1
+      ports: ["5173:5173"]
+      environment:
+       - VITE_API_BASE_URL=http://backend:8000
+      depends_on: [backend]
 
 volumes:
   postgres_data:

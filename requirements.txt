@@ -3,6 +3,7 @@ fastapi==0.111.0
 uvicorn[standard]==0.29.0
 python-dotenv==1.0.1
 openai>=1.97.0
+
 pydantic==2.7.1
 pydantic-settings==2.2.1
 grpcio==1.74.0
@@ -13,16 +14,18 @@ pytest==8.3.3
 # --- Database ---
 sqlalchemy==2.0.30
 psycopg[binary]==3.2.9
+
 alembic==1.16.4
 asyncpg==0.28.0
-
 # --- Security ---
 passlib[bcrypt]==1.7.4
 python-jose[cryptography]==3.3.0
 email-validator==2.1.1
 
-# --- PDF Generation ---
+# --- PDF Generation (НОВОЕ) ---
 weasyprint==66.0
 
 # --- Payments ---
 stripe==12.4.0
+
+asyncpg == 0.28.0
