@@ -1,6 +1,12 @@
 services:
-  backend:
+  frontend:
+    build:
+      context: .                 # контекст — корень репо
+      dockerfile: frontend/Dockerfile.dev  # путь к Dockerfile ОТНОСИТЕЛЬНО КОНТЕКСТА
     environment:
-      PYTHONPATH: /app/backend
-      BACKEND_CORS_ORIGINS: "http://localhost:5173,http://127.0.0.1:5173"
-    command: ["/bin/sh","-lc","cd /app/backend && uvicorn main:app --host 0.0.0.0 --port 8000 --reload"]
+      VITE_API_BASE_URL: "http://localhost:8000"
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app          # hot-reload
+      - /app/node_modules
