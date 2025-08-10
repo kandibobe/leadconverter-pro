@@ -1,9 +1,12 @@
 import os
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 
-DATABASE_URL = os.getenv("DATABASE_URL")  # postgresql+psycopg://...
+db_url_sync = os.getenv("DATABASE_URL")  # postgresql+psycopg://...
+if not db_url_sync:
+    raise RuntimeError("DATABASE_URL is not set")
 
-# alembic использует sync-драйвер, а приложение — async. Это нормально (best practice).
-engine = create_async_engine(DATABASE_URL.replace("postgresql+psycopg", "postgresql+asyncpg"), echo=False)
+db_url_async = db_url_sync.replace("postgresql+psycopg", "postgresql+asyncpg")
+engine_async = create_async_engine(db_url_async, echo=False, future=True)
 
-async_session_maker = async_sessionmaker(bind=engine, class_=AsyncSession, expire_on_commit=False)
+AsyncSessionLocal = async_sessionmaker(engine_async, expire_on_commit=False,
+                                       class_=AsyncSession)

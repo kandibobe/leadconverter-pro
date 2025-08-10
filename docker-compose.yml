@@ -13,7 +13,8 @@ services:
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME} -h localhost -p 5432"]
+      # внутри контейнера лучше явно идти на 127.0.0.1
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB -h 127.0.0.1 -p 5432 || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -23,18 +24,18 @@ services:
       context: .
       dockerfile: backend/Dockerfile
     container_name: leadconverter-pro-backend-1
-    command: uvicorn main:app --uds /tmp/uvicorn.sock --reload
-    working_dir: /app
+    working_dir: /app/backend
+    # слушаем TCP-порт, а не UNIX socket
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
     volumes:
       - .:/app
-      - uvicorn-sock:/tmp
     ports:
       - "8000:8000"
     depends_on:
       db:
         condition: service_healthy
     env_file:
-      - .env
+      - .env.docker
 
   frontend:
     build:
@@ -53,4 +54,3 @@ services:
 
 volumes:
   postgres_data:
-  uvicorn-sock:
