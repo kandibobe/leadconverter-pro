@@ -23,7 +23,7 @@ services:
       dockerfile: backend/Dockerfile
     container_name: leadconverter-pro-backend-1
     # Запускаем uvicorn по TCP (а не через Unix socket), чтобы порт 8000 реально слушался
-    command: ["/bin/sh","-c","/app/backend/scripts/entrypoint.sh && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"]
+    command: ["/bin/sh","-lc","uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"]
     working_dir: /app
     volumes:
       - .:/app

@@ -2,12 +2,15 @@
 set -e
 
 echo "Waiting for postgres..."
-# ждём доступность порта 5432 на хосте db
-until nc -z db 5432; do
+until pg_isready -h "${DB_HOST:-db}" -p "${DB_PORT:-5432}" -U "${DB_USER:-lcp_user}"; do
   sleep 1
 done
 
 echo "Applying database migrations..."
-alembic -c backend/alembic.ini upgrade head || {
-  echo "Alembic upgrade failed"; exit 1;
-}
+if [ -f "/app/alembic.ini" ]; then
+  alembic -c /app/alembic.ini upgrade head || echo "Alembic failed, continuing..."
+else
+  echo "No /app/alembic.ini found, skipping migrations"
+fi
+
+exec "$@"
