@@ -1,6 +1,6 @@
-# docker-compose.override.yml
 services:
   backend:
     environment:
       PYTHONPATH: /app/backend
+      BACKEND_CORS_ORIGINS: "http://localhost:5173,http://127.0.0.1:5173"
     command: ["/bin/sh","-lc","cd /app/backend && uvicorn main:app --host 0.0.0.0 --port 8000 --reload"]
