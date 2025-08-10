@@ -1,6 +1,5 @@
 #!/bin/sh
 set -e
-
 echo "Waiting for postgres..."
 until pg_isready -h "${DB_HOST:-db}" -p "${DB_PORT:-5432}" -U "${DB_USER:-lcp_user}"; do
   sleep 1

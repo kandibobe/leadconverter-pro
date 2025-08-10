@@ -5,14 +5,13 @@ from sqlalchemy import engine_from_config, pool
 from alembic import context
 
 config = context.config
-
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 DB_URL = os.getenv("DATABASE_URL", "postgresql+psycopg://lcp_user:lcp_password@db:5432/lcp_db")
 config.set_main_option("sqlalchemy.url", DB_URL)
 
-target_metadata = None  # подключите метаданные моделей, если нужна автогенерация
+target_metadata = None
 
 def run_migrations_offline() -> None:
     url = config.get_main_option("sqlalchemy.url")

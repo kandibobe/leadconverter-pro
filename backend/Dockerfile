@@ -1,24 +1,12 @@
 FROM python:3.11-slim
-
-# Системные библиотеки (WeasyPrint + компоновка шрифтов и т.д.)
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential curl ca-certificates \
-    libcairo2 libpango-1.0-0 libpangocairo-1.0-0 \
-    libgdk-pixbuf-2.0-0 shared-mime-info \
-    && rm -rf /var/lib/apt/lists/*
-
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 WORKDIR /app
 
-# Сначала копируем только requirements для более стабильного кеша сборки
 COPY backend/requirements.txt /app/backend/requirements.txt
-RUN pip install --upgrade pip && pip install -r /app/backend/requirements.txt
+RUN pip install --no-cache-dir --upgrade pip \
+ && pip install --no-cache-dir -r /app/backend/requirements.txt \
+ && pip install --no-cache-dir "psycopg[binary]>=3.1,<3.4"
 
-# Теперь — исходники backend и скрипт старта
-COPY backend /app/backend
-COPY scripts /app/backend/scripts
-
-# Чтобы импорты вида "from app..." работали
-ENV PYTHONPATH=/app/backend
-
-# Гарантируем права на entrypoint
-RUN chmod +x /app/backend/scripts/entrypoint.sh
+COPY . /app
+EXPOSE 8000
+CMD ["sh","-lc","cd /app/backend && uvicorn main:app --host 0.0.0.0 --port 8000"]
