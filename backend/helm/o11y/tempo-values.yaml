@@ -1,0 +1,14 @@
+# helm/o11y/tempo-values.yaml (минимум)
+ingester:
+  replicas: 1
+distributor:
+  replicas: 1
+storage:
+  trace:
+    backend: s3
+    s3:
+      bucket: tempo-traces
+      endpoint: s3.eu-central-1.amazonaws.com
+      region: eu-central-1
+server:
+  log_level: info

@@ -2,25 +2,31 @@ services:
   db:
     image: postgres:15-alpine
     container_name: leadconverter-pro-db-1
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
     environment:
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=${DB_NAME}
+      POSTGRES_USER: ${DB_USER:-lcp_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-lcp_password}
+      POSTGRES_DB: ${DB_NAME:-lcp_db}
     ports:
       - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME} -h localhost -p 5432"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-lcp_user} -d ${DB_NAME:-lcp_db} -h 127.0.0.1 -p 5432"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
+    restart: unless-stopped
 
   backend:
-    image: leadconverter-pro-backend:dev   # используем уже собранный образ
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
     container_name: leadconverter-pro-backend-1
-    working_dir: /app/backend
-    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+    # Запускаем uvicorn по TCP (а не через Unix socket), чтобы порт 8000 реально слушался
+    command: ["/bin/sh","-c","/app/backend/scripts/entrypoint.sh && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"]
+    working_dir: /app
+    volumes:
+      - .:/app
     ports:
       - "8000:8000"
     depends_on:
@@ -28,19 +34,24 @@ services:
         condition: service_healthy
     env_file:
       - .env
-    volumes:
-      - .:/app
-
+    restart: unless-stopped
 
   frontend:
     build:
       context: .
-      dockerfile: frontend/Dockerfile.dev
-      container_name: leadconverter-pro-frontend-1
-      ports: ["5173:5173"]
-      environment:
-       - VITE_API_BASE_URL=http://backend:8000
-      depends_on: [backend]
+    # Если у тебя есть отдельный Dockerfile дев-фронта — раскомментируй строку ниже и удали generic build
+    #  dockerfile: frontend/Dockerfile.dev
+    container_name: leadconverter-pro-frontend-1
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      VITE_API_BASE_URL: http://backend:8000
+    depends_on:
+      - backend
+    restart: unless-stopped
 
 volumes:
   postgres_data:

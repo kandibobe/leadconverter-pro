@@ -1,0 +1,20 @@
+name: e2e
+on:
+  push: { branches: [main] }
+  pull_request:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        shard: [1/3, 2/3, 3/3]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm ci
+        working-directory: frontend
+      - run: npx playwright install --with-deps
+      - name: Run shard ${{ matrix.shard }}
+        run: npx playwright test --shard=${{ matrix.shard }} --reporter=line
+        working-directory: frontend

@@ -1,12 +1,20 @@
-import os
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
+# backend/app/db/session.py
+from contextvars import ContextVar
+from sqlalchemy import event
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
-db_url_sync = os.getenv("DATABASE_URL")  # postgresql+psycopg://...
-if not db_url_sync:
-    raise RuntimeError("DATABASE_URL is not set")
+TENANT_ID: ContextVar[str | None] = ContextVar("TENANT_ID", default=None)
 
-db_url_async = db_url_sync.replace("postgresql+psycopg", "postgresql+asyncpg")
-engine_async = create_async_engine(db_url_async, echo=False, future=True)
+engine = create_async_engine(
+    "postgresql+asyncpg://USER:PASS@HOST/DB",
+    pool_size=10, max_overflow=10, pool_pre_ping=True,
+)
 
-AsyncSessionLocal = async_sessionmaker(engine_async, expire_on_commit=False,
-                                       class_=AsyncSession)
+SessionLocal = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+
+@event.listens_for(AsyncSession, "after_begin")
+def _set_rls(session, transaction, connection):
+    tid = TENANT_ID.get()
+    if tid:
+        connection.exec_driver_sql("SET app.tenant_id = %s", (tid,))

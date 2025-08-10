@@ -1,0 +1,17 @@
+# helm/o11y/loki-values.yaml (минимум)
+loki:
+  storage:
+    type: s3
+    s3:
+      bucketnames: loki-logs
+      endpoint: s3.eu-central-1.amazonaws.com
+      region: eu-central-1
+  schemaConfig:
+    configs:
+      - from: 2025-01-01
+        store: boltdb-shipper
+        object_store: s3
+        schema: v13
+        index:
+          prefix: loki_index_
+          period: 24h

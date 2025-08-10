@@ -1,21 +1,37 @@
-from dotenv import load_dotenv
-from fastapi import FastAPI
+# backend/app/main.py
+from fastapi import FastAPI, Request, Depends, Header
+from app.db.session import SessionLocal, TENANT_ID, engine as sa_engine
+from app.otel import setup_otel
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.billing.webhook import router as stripe_webhooks
+app.include_router(stripe_webhooks)
 
-from app.api.v1.endpoints.api import api_router
-from app.api.v1.endpoints import log_summary
+app = FastAPI(title="LeadConverter API")
+setup_otel(app=app, engine=sa_engine)  # OTel FastAPI/SQLAlchemy
 
-load_dotenv()
+async def get_db(tenant_id: str | None = Header(default=None, alias="X-Tenant-ID")) -> AsyncSession:
+    token = None
+    if tenant_id:
+        token = TENANT_ID.set(tenant_id)
+    try:
+        async with SessionLocal() as s:
+            yield s
+    finally:
+        if token: TENANT_ID.reset(token)
 
-app = FastAPI(
-    title="LeadConverter Pro API",
-    description="API для интерактивного квиз-калькулятора.",
-    version="1.0.0"
-)
+@app.get("/healthz")
+async def healthz(): return {"ok": True}
 
-# Подключаем роутеры
-app.include_router(api_router, prefix="/api/v1")
-app.include_router(log_summary.router)
+# простейшая запись лида (event-sourcing lite)
+from fastapi import Body
+from uuid import uuid4
+from sqlalchemy import text
 
-@app.get("/")
-def read_root():
-    return {"message": "Welcome to LeadConverter Pro API"}
+@app.post("/lead/create")
+async def lead_create(body: dict = Body(...), db: AsyncSession = Depends(get_db)):
+    lead_id = body.get("lead_id") or str(uuid4())
+    await db.execute(
+        text("INSERT INTO lead_events(tenant_id, lead_id, event_type, payload) VALUES(:t,:l,'created',:p)")
+        .bindparams(t=TENANT_ID.get(), l=lead_id, p=body))
+    await db.commit()
+    return {"lead_id": lead_id}
