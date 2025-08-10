@@ -5,8 +5,6 @@ from typing import Any
 from app import crud, schemas
 from app.api import deps
 
-# Настраиваем базовый логгер
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
