@@ -25,3 +25,5 @@ weasyprint==66.0
 
 # --- Payments ---
 stripe==12.4.0
+
+asyncpg == 0.28.0
